@@ -18,7 +18,8 @@ export default function Page() {
       if (currentTab !== 'contract') return;
       const response = await fetchContractVerification(address!.address);
       setContractVerification(response?.data);
-      console.log('response: ', response);
+      console.log("Contract verification data fetched and set");
+      // console.log('response: ', response);
     }
 
     getContractVerification();
