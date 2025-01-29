@@ -12,7 +12,6 @@ type props = {
 }
 
 function InternalTxsTable({ itxs }: props) {
-  console.log('itxs: ', itxs);
   return (
     <Table>
       <TableHeader>

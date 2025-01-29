@@ -30,7 +30,6 @@ export default function Page() {
       if (currentTab !== 'ttransfer' || tokensData?.length) return;
       setLoading(true);
       const data = await fetchTransferEventByTxhash(tx!.hash!);
-      console.log('data: ', data);
       setTokensData(data?.data);
       setLoading(false);
     }

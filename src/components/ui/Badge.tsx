@@ -1,7 +1,7 @@
 import React from 'react'
 
 type props = {
-  text: string
+  text: string | undefined
   type: 'success' | 'fail' | 'info'
   className?: string
 }

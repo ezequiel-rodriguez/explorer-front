@@ -13,3 +13,8 @@ export async function fetchInternalTxsByTxHash(hash: string) {
   const response = await fetchData<IInternalTxs[]>(`${ROUTER.ITXS.TX}/${hash}`);
   return response;
 }
+
+export async function fetchInternalTxsByAddress(address: string) {
+  const response = await fetchData<IInternalTxs[]>(`${ROUTER.ITXS.ADDRESS}/${address}`);
+  return response;
+}

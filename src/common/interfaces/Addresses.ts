@@ -1,14 +1,16 @@
 
 export interface IAddresses {
   id: number;
+  isVerified: boolean
   address: string;
   isNative: boolean;
-  type: string;
+  type: 'account' | 'contract';
   name?: string | null;
   symbol?: string | null;
   balance: number;
   blockNumber: number;
   code: string
+  deployedCode: string
   createdByTx?: {
     timestamp: string
     receipt: {
@@ -23,8 +25,9 @@ export interface IAddresses {
 export interface IContractVerification {
   id: string
   match: boolean
-  abi: any[]
+  abi: []
   request: {
+    name: string
     bytecode: string
     deployedBytecode: string
     imports: [
@@ -42,5 +45,14 @@ export interface IContractVerification {
       }
     }
   }
+  result: {
+    encodedConstructorArguments: string
+  }
+  sources: [
+    {
+      file: string
+      content: string
+    }
+  ]
   timestamp: string
 }

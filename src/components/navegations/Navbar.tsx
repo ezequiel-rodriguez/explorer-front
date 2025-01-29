@@ -2,8 +2,8 @@
 import { ROUTER } from '@/common/constants';
 import { usePathname } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
-import { isAddress } from '@rsksmart/rsk-utils/dist/addresses';
-import { isHexString, isTxOrBlockHash, add0x } from '@rsksmart/rsk-utils/dist/strings';
+import { isAddress } from '@rsksmart/rsk-utils';
+import { isHexString, add0x } from '@rsksmart/rsk-utils';
 import { fetchOneBlock } from '@/services/blocks';
 import { IBlocks } from '@/common/interfaces/Blocks';
 
@@ -23,6 +23,7 @@ function Navbar() {
   const [focus, setFocus] = useState(false);
   const [searchResults, setSearchResults] = useState<{ type: string, value: string | number} | null>(null);
   const [blockData, setBlockData] = useState<IBlocks | undefined>();
+  console.log('blockData: ', blockData);
   const pathname = usePathname();
 
   const withp = pathname === ROUTER.HOME ? 'w-full' : 'w-[600px]';
@@ -58,21 +59,20 @@ function Navbar() {
     const isHex = isHexString(value);
     const hex = isHex && add0x(value);
     const address = hex && isAddress(value);
-    const transaction = isTxOrBlockHash(hex);
+    // const transaction = isTxOrBlockHash(hex);
     console.log('address: ', address);
-    console.log('transaction: ', transaction);
-    const blockHash = transaction;
+    // const blockHash = transaction;
 
     console.log('number: ', number);
-    if (number.isBlock || blockHash) {
-      setSearchResults({ type: 'block', value: number.block });
-    } else if (address) {
-      setSearchResults({ type: 'address', value: hex });
-    } else if (transaction) {
-      setSearchResults({ type: 'transaction', value: hex });
-    } else {
-      setSearchResults(null);
-    }
+    // if (number.isBlock || blockHash) {
+    //   setSearchResults({ type: 'block', value: number.block });
+    // } else if (address) {
+    //   setSearchResults({ type: 'address', value: hex });
+    // } else if (transaction) {
+    //   setSearchResults({ type: 'transaction', value: hex });
+    // } else {
+    //   setSearchResults(null);
+    // }
   };
 
   const renderLink = () => {

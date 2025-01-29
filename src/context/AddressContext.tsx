@@ -6,7 +6,6 @@ interface DataContextType {
   address: IAddresses | undefined
   contractVerification: IContractVerification | undefined
   setContractVerification: React.Dispatch<React.SetStateAction<IContractVerification | undefined>>;
-  
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);

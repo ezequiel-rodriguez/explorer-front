@@ -6,8 +6,8 @@ import ListContent from '@/components/generals/ListContent'
 import ListItem from '@/components/generals/ListItem'
 import { CheckIcon } from '@/common/icons'
 import { useAddressDataContext } from '@/context/AddressContext'
-import Button from '@/components/ui/Button'
 import Date from '@/components/ui/Date'
+import ButtonGroup from '@/components/ui/ButtonGroup'
 
 type ISubtab = 'code' | 'abi' | 'bytecode';
 
@@ -15,6 +15,12 @@ function ContractGeneral() {
   const { address, contractVerification: contract } = useAddressDataContext();
   const optimizer = contract?.request.settings.optimizer;
   const [subTab, setSubTab] = useState<ISubtab>('code');
+
+  const btnGroup = [
+    { label: 'Code', value: 'code' },
+    { label: 'ABI', value: 'abi' },
+    { label: 'Bytecode', value: 'bytecode' },
+  ];
 
   return (
     <div>
@@ -24,7 +30,7 @@ function ContractGeneral() {
           <ListItem
             className='flex-1'
             title='Contract Name:'
-            value={address?.name}
+            value={address?.name || contract?.request.name}
             type='simple'
           />
           <ListItem
@@ -54,27 +60,14 @@ function ContractGeneral() {
           />
         </ListContent>
       </div>
-      <div className='flex gap-2'>
-        <Button
-          label='Code'
-          className='bg-btn-secondary'
-          onClick={() => setSubTab('code')}
-          type='small'
-        />
-        <Button
-          label='ABI'
-          onClick={() => setSubTab('abi')}
-          type='small'
-        />
-        <Button
-          label='Bytecode'
-          onClick={() => setSubTab('bytecode')
-        }
-          type='small'
-        />
-      </div>
+      <ButtonGroup
+        className='mb-4'
+        options={btnGroup}
+        activeValue={subTab}
+        onChange={(value) => setSubTab(value as ISubtab)}
+      />
       { subTab === 'code' && <ContractCode />}
-      { subTab === 'abi' && <ContractABI />}
+      { subTab === 'abi' && <ContractABI abi={JSON.stringify(contract?.abi, null, 2)} />}
       { subTab === 'bytecode' && <ByteCode />}
     </div>
   )

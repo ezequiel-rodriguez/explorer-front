@@ -23,4 +23,5 @@ export { default as CopyIcon } from './CopyIcon';
 export { default as InfoIcon } from './InfoIcon';
 export { default as ClockIcon } from './ClockIcon';
 export { default as CheckIcon } from './CheckIcon';
+export { default as CodePageIcon } from './CodePageIcon';
 export { default as Logo } from './Logo';

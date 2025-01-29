@@ -18,3 +18,8 @@ export async function fetchTxsByBlock(blockNumberOrHash: number | string) {
   const response = await fetchData<ITxs[]>(`${ROUTER.TXS.BLOCK}/${blockNumberOrHash}`);
   return response;
 }
+
+export async function fetchTxsByAddress(address: string) {
+  const response = await fetchData<ITxs[]>(`${ROUTER.TXS.ADDRESS}/${address}`);
+  return response;
+}

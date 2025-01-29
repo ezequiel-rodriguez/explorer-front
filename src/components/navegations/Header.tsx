@@ -6,7 +6,6 @@ import { ROUTER } from '@/common/constants';
 
 function Header() {
   const pathname = usePathname();
-  // console.log('pathname: ', pathname);
   if (pathname === ROUTER.HOME) return;
   return (
     <header className='flex justify-between items-center'>

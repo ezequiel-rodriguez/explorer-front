@@ -10,7 +10,6 @@ import CardLoader from "@/components/loaders/CardLoader";
 export default function BlockContainer() {
   const { blocks, autoUpdate, setAutoUpdate } = useHomeDataContext();
   const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log('e: ', e.target.checked);
     const value = e.target.checked;
     setAutoUpdate(value);
     localStorage.setItem('autoupdate', value ? 'active' : 'inactive');

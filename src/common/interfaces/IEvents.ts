@@ -3,7 +3,7 @@ export interface IEvents {
   eventId: string;
   abi: EventAbi;
   address: string;
-  args: string[] | null;
+  args: string[] | undefined;
   topic0: string;
   topic1: string | null;
   topic2: string | null;
