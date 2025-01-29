@@ -17,7 +17,7 @@ const CIMAccordion = ({ title, className, children }: Props) => {
   };
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={className ? className : "w-full bg-[#141414] border border-line rounded-xl"}>
       {/* Button to toggle accordion */}
       <button
         onClick={toggleAccordion}
