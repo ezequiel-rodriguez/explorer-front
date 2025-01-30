@@ -1,8 +1,8 @@
 import CIMAccordion from '@/components/ui/CIMAccordion'
 import { useAddressDataContext } from '@/context/AddressContext'
-import React, { useEffect, useState } from 'react'
-import MethodDataVisualizer, { RSKFunctionFragment } from './MethodDataVisualizer.util'
-// import { v4 as uuidv4 } from 'uuid';
+import React, { useState } from 'react'
+import MethodDataVisualizer, { InteractiveMethodDataVisualizer, RSKFunctionFragment } from './MethodDataVisualizer.util'
+import { ethers } from 'ethers'
 
 function ReadContract() {
   const { address, contractVerification } = useAddressDataContext()
@@ -13,69 +13,44 @@ function ReadContract() {
 
   const { abi } = contractVerification as { abi: RSKFunctionFragment[] }
 
-  const constructor = abi.find(fragment => fragment.type === 'constructor')
-  const fallback = abi.find(fragment => fragment.type === 'fallback')
-  const receive = abi.find(fragment => fragment.type === 'receive')
-  const error = abi.find(fragment => fragment.type === 'error')
-  const events = abi.filter(fragment => fragment.type === 'event')
+  // const constructor = abi.find(fragment => fragment.type === 'constructor')
+  // const fallback = abi.find(fragment => fragment.type === 'fallback')
+  // const receive = abi.find(fragment => fragment.type === 'receive')
+  // const error = abi.find(fragment => fragment.type === 'error')
+  // const events = abi.filter(fragment => fragment.type === 'event')
   const methods = abi.filter(fragment => fragment.type === 'function')
   const readMethods = methods.filter(fragment => fragment.stateMutability === 'view' || fragment.stateMutability === 'pure')
-  const writeMethods = methods.filter(fragment => fragment.stateMutability === 'payable' || fragment.stateMutability === 'nonpayable')
+  // const writeMethods = methods.filter(fragment => fragment.stateMutability === 'payable' || fragment.stateMutability === 'nonpayable')
+  // console.dir({ constructor, fallback, receive, error, events, methods, readMethods, writeMethods })
 
-  console.dir({
-    constructor,
-    fallback,
-    receive,
-    error,
-    events,
-    methods,
-    readMethods,
-    writeMethods
-  })
+  const [interactiveMethods, setInteractiveMethods] = useState<InteractiveMethods>(getInteractiveMethods(readMethods));
 
-  const [inputValues, setInputValues] = useState<{
-    [key: string]: any,
-  }>({});
-
-  useEffect(() => {
-    const initialInputValues: { [methodId: string]: { [inputName: string]: string } } = {};
-    readMethods.forEach((method: any) => {
-      // const methodId = `${method.name}-${uuidv4()}`;
-      const methodId = method.name // methods may have same name? (overload) Check how to globally identify a method. Maybe reconstruct signature. This could later be used for retrieving the selector
-      initialInputValues[methodId] = {};
-      method.inputs.forEach((input: any) => {
-        initialInputValues[methodId][input.name] = '';
-        initialInputValues[methodId].sourceMethod = method;
-      });
+  const handleInputChange = (selector: string, inputIndex: number, value: string) => {
+    setInteractiveMethods(prevMethods => {
+      const updatedMethods = { ...prevMethods };
+      updatedMethods[selector].state.inputs[inputIndex] = value;
+      return updatedMethods;
     });
-    setInputValues(initialInputValues);
-  }, []);
-  
-  const handleInputChange = (methodId: string, inputName: string, value: string) => {
-    setInputValues(prevState => ({
-      ...prevState,
-      [methodId]: {
-        ...prevState[methodId],
-        [inputName]: value
-      }
-    }));
   };
 
   return (
     <div>
       <div className='flex flex-col gap-2'>
-        {readMethods.map((method, i) => {
+        {Object.values(interactiveMethods).map((interactiveMethod, i) => {
+          const { method, signatureData } = interactiveMethod
           const index = i + 1
           const methodTitleProps = {
             index,
-            methodName: method.name as string,
-            selectorHash: "0x1234ABcD" // TODO: Figure out how to get the selector
+            methodName: method.name,
+            selectorHash: signatureData.selector
           }
 
           return (
             <CIMAccordion key={index} title={<MethodTitle {...methodTitleProps} />}>
               <div className='p-2'>
-                <MethodDataVisualizer method={method} />
+                <MethodDataVisualizer method={method}>
+                  <InteractiveMethodDataVisualizer interactiveMethod={interactiveMethod} />
+                </MethodDataVisualizer>
               </div>
               <div>
                 {method.inputs.map((input, inputIndex) => {
@@ -90,14 +65,12 @@ function ReadContract() {
                       name={input.name}
                       placeholder={`${inputName} (${input.type})`}
                       className='bg-[#262626] p-2 border border-line rounded-md outline-none'
-                      value={inputValues[method.name]?.[input.name] || ''}
-                      onChange={(e) => handleInputChange(method.name, input.name, e.target.value)}/>
+                      value={interactiveMethod.state.inputs[inputIndex]}
+                      onChange={(e) => handleInputChange(interactiveMethod.signatureData.selector, inputIndex, e.target.value)}
+                      />
                     </div>
                   )
                 })}
-              </div>
-              <div className='border-red-500'>
-                <button className='p-4' onClick={() => console.log({ methods: inputValues })}>Show methods state</button>
               </div>
             </CIMAccordion>
           )
@@ -122,6 +95,79 @@ const MethodTitle = ({
       <span className='text-sm text-[#b9b9b9]'>{`(${selectorHash})`}</span>
     </div>
   )
+}
+
+type SignatureData = {
+  name: string
+  params: string[]
+  signature: string
+  selector: string
+}
+
+function getMethodSignatureData (method: RSKFunctionFragment): SignatureData {
+  const name = method.name
+  const params = method.inputs.map(input => {
+    if (input.type === 'tuple') {
+      return `(${input.components!.map(component => component.type).join(',')})`
+    }
+
+    return input.type
+  })
+  const signature = `${name}(${params.join(',')})`
+  const selector = ethers.FunctionFragment.getSelector(name, params)
+
+  return {
+    name,
+    params,
+    signature,
+    selector
+  }
+}
+
+type MethodState = {
+  inputs: string[];
+  outputs: string[];
+  message: {
+    content: string;
+    style: string;
+  };
+}
+
+export type InteractiveMethod = {
+  method: RSKFunctionFragment
+  signatureData: SignatureData
+  state: MethodState
+}
+
+type InteractiveMethods = {
+  [selector: string]: InteractiveMethod
+}
+
+function getInteractiveMethods(methods: RSKFunctionFragment[]): InteractiveMethods {
+  const interactiveMethods: InteractiveMethods = {}
+  
+  methods.forEach((method) => {
+    try {
+      const signatureData = getMethodSignatureData(method)
+
+      interactiveMethods[signatureData.selector] = {
+        method,
+        signatureData,
+        state: {
+          inputs: method.inputs.map(_ => ''),
+          outputs: method.outputs.map(_ => ''),
+          message: {
+            content: '',
+            style: ''
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error while creating interactive method. Skipping...")
+    }
+  })
+
+  return interactiveMethods
 }
 
 export default ReadContract

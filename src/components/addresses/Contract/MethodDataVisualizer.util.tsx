@@ -1,6 +1,7 @@
 import CIMAccordion from "@/components/ui/CIMAccordion"
 import { ParamType } from "ethers";
 import { FunctionFragment, FragmentType } from "ethers"
+import { InteractiveMethod } from "./ReadContract";
 
 // Rootstock fragment formatting
 
@@ -18,7 +19,7 @@ export interface RSKFunctionFragment extends Omit<FunctionFragment, 'type'> {
   type: ExtendedFragmentType;
 }
 
-export default function MethodDataVisualizer ({ method }: { method: RSKFunctionFragment }) {
+export default function MethodDataVisualizer ({ method, children }: { method: RSKFunctionFragment, children?: React.ReactNode }) {
   const Title = () => {
     return (
       <div className='flex gap-1'>
@@ -66,7 +67,58 @@ export default function MethodDataVisualizer ({ method }: { method: RSKFunctionF
             </div>
           )
         }
+        {
+          children
+        }
       </div>
     </CIMAccordion>
+  )
+}
+
+export function InteractiveMethodDataVisualizer ({ interactiveMethod }: { interactiveMethod: InteractiveMethod }) {
+  const { method, signatureData, state } = interactiveMethod
+  return (
+    <div>
+      <CIMAccordion title={`Interactive data (${method.name})`} className="mt-4">
+        <div className="p-4">
+          <h3 className="text-lg font-semibold text-white mb-2">Signature Data</h3>
+          <div className="mb-4">
+            <p className="text-sm text-gray-300"><span className="font-bold text-gray-400">Name:</span> {signatureData.name}</p>
+            <p className="text-sm text-gray-300"><span className="font-bold text-gray-400">Params:</span> {signatureData.params.join(', ')}</p>
+            <p className="text-sm text-gray-300"><span className="font-bold text-gray-400">Signature:</span> {signatureData.signature}</p>
+            <p className="text-sm text-gray-300"><span className="font-bold text-gray-400">Selector:</span> {signatureData.selector}</p>
+          </div>
+          
+          <h3 className="text-lg font-semibold text-white mb-2">State</h3>
+          <div className="mb-4">
+            <h4 className="text-md font-bold text-gray-400 mb-1"> === Inputs === </h4>
+            <div className="space-y-2">
+              {state.inputs.length === 0 && <p className="text-sm text-gray-300">(none)</p>}
+              {state.inputs.map((input, index) => (
+                <p key={index} className="text-sm text-gray-300">
+                  <span className="text-gray-400">{method.inputs[index].name || `Input ${index + 1}`}:</span> {input}
+                </p>
+              ))}
+            </div>
+          </div>
+          <div className="mb-4">
+            <h4 className="text-md font-bold text-gray-400 mb-1"> === Outputs === </h4>
+            <div className="space-y-2">
+              {state.outputs.length === 0 && <p className="text-sm text-gray-300">(none)</p>}
+              {state.outputs.map((output, index) => (
+                <p key={index} className="text-sm text-gray-300">
+                  <span className="text-gray-400">{method.outputs[index].name || `Output ${index + 1}`}:</span> {output}
+                </p>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h4 className="text-md font-semibold text-gray-400 mb-1"> === Message === </h4>
+            <p className="text-sm text-gray-300"><span className="font-bold text-gray-400">Content:</span> {state.message.content}</p>
+            <p className="text-sm text-gray-300"><span className="font-bold text-gray-400">Style:</span> {state.message.style}</p>
+          </div>
+        </div>
+      </CIMAccordion>
+    </div>
   )
 }
