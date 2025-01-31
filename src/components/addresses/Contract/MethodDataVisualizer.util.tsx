@@ -1,23 +1,5 @@
+import { InteractiveMethod, RSKFunctionFragment } from "@/common/utils/contractInteractions"
 import CIMAccordion from "@/components/ui/CIMAccordion"
-import { ParamType } from "ethers";
-import { FunctionFragment, FragmentType } from "ethers"
-import { InteractiveMethod } from "./ReadContract";
-
-// Rootstock fragment formatting
-
-// Include internalType prop
-interface ExtendedInput extends ParamType {
-  internalType?: string;
-}
-
-// Include "receive" fragment type
-type ExtendedFragmentType = FragmentType | 'receive';
-
-// Rootstock Function Fragment
-export interface RSKFunctionFragment extends Omit<FunctionFragment, 'type'> {
-  inputs: ExtendedInput[];
-  type: ExtendedFragmentType;
-}
 
 export default function MethodDataVisualizer ({ method, children }: { method: RSKFunctionFragment, children?: React.ReactNode }) {
   const Title = () => {

@@ -2,10 +2,9 @@ import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import React, { useMemo, useState } from 'react'
 import ContractGeneral from './ContractGeneral';
-import ReadContract from './ReadContract';
-import WriteContract from './WriteContract';
-import ReadProxy from './ReadProxy';
-import WriteProxy from './WriteProxy';
+import { useAddressDataContext } from '@/context/AddressContext';
+import ContractInteractionMethods from './ContractInteractionMethods';
+import { RSKFunctionFragment, rskFragmentsUtils } from '@/common/utils/contractInteractions';
 
 type TabType = 'general' | 'readProxy' | 'writeProxy' | 'readContract' | 'writeContract';
 
@@ -40,35 +39,37 @@ const tabs = [
 
 function ContractDetail() {
   const [tab, setTab] = useState<TabType>(tabTypes.general);
-  const isProxy = false; // TODO: Define how to set this value
+  const { address, contractVerification } = useAddressDataContext()
+
+  if (!contractVerification) return
+
+  // TODO: Create ABI selector depending if contract is normal, proxy or native
+  const isProxy = false;
+  const isBridge = false;
+  const { abi } = contractVerification as { abi: RSKFunctionFragment[] }
+
+  const readMethods = rskFragmentsUtils.getReadMethods(abi);
+  const writeMethods = rskFragmentsUtils.getWriteMethods(abi);
 
   const tabsToRender = useMemo(() => {
     return isProxy ? tabs : tabs.filter(({ type }) => !proxyTabTypes.includes(type));
   }, [isProxy]);
 
-  const renderTabButtons = () => {
-    return tabsToRender.map(({ label, type }) => (
-      <Button
-        key={type}
-        label={label}
-        type='small'
-        className={tab === type ? 'bg-btn-secondary' : ''}
-        onClick={() => setTab(type)}
-      />
-    ));
-  };
-
   return (
     <Card className='bg-secondary mt-6 w-full min-h-[500px]'>
+      {/* Tab Buttons */}
       <div className='flex gap-2'>
-        {renderTabButtons()}
+        {tabsToRender.map(({ label, type }) => (
+          <Button key={type} label={label} type='small' className={tab === type ? 'bg-btn-secondary' : ''} onClick={() => setTab(type)} />
+        ))}
       </div>
+      {/* Tabs */}
       <div className='mt-5'>
         {tab === TabTypesEnum.General && <ContractGeneral />}
-        {tab === TabTypesEnum.ReadProxy && <ReadProxy />}
-        {tab === TabTypesEnum.WriteProxy && <WriteProxy />}
-        {tab === TabTypesEnum.ReadContract && <ReadContract />}
-        {tab === TabTypesEnum.WriteContract && <WriteContract />}
+        {tab === TabTypesEnum.ReadProxy && <ContractInteractionMethods methods={readMethods} />}
+        {tab === TabTypesEnum.WriteProxy && <ContractInteractionMethods methods={writeMethods} />}
+        {tab === TabTypesEnum.ReadContract && <ContractInteractionMethods methods={readMethods}/>}
+        {tab === TabTypesEnum.WriteContract && <ContractInteractionMethods methods={writeMethods} />}
       </div>
     </Card>
   )
