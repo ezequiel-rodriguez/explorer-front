@@ -20,10 +20,10 @@
     "highlightjs-solidity": "^2.0.6",
     "bignumber.js": "^7.2.1",
     "lightweight-charts": "^4.2.2",
-    "next": "15.0.3",
+    "next": "^15.1.6",
     "prismjs": "^1.29.0",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "uuid": "^11.0.5"
   },
   "devDependencies": {
