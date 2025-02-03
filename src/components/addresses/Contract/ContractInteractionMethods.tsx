@@ -2,6 +2,7 @@ import CIMAccordion from '@/components/ui/CIMAccordion'
 import React, { useState } from 'react'
 import MethodDataVisualizer, { InteractiveMethodDataVisualizer } from './MethodDataVisualizer.util'
 import { InteractiveMethodsDict, RSKFunctionFragment, getInteractiveMethods } from '@/common/utils/contractInteractions';
+import { WalletConnection } from '@/components/web3/Web3Components';
 
 function ContractInteractionMethods({ methods }: { methods: RSKFunctionFragment[] }) {
   const [interactiveMethods, setInteractiveMethods] = useState<InteractiveMethodsDict>(getInteractiveMethods(methods));
@@ -16,6 +17,7 @@ function ContractInteractionMethods({ methods }: { methods: RSKFunctionFragment[
 
   return (
     <div>
+      <WalletConnection />
       <div className='flex flex-col gap-2'>
         {Object.values(interactiveMethods).map((interactiveMethod, i) => {
           const { method, signatureData } = interactiveMethod
