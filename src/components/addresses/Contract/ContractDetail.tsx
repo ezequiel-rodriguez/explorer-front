@@ -66,10 +66,10 @@ function ContractDetail() {
       {/* Tabs */}
       <div className='mt-5'>
         {tab === TabTypesEnum.General && <ContractGeneral />}
-        {tab === TabTypesEnum.ReadProxy && <ContractInteractionMethods methods={readMethods} />}
-        {tab === TabTypesEnum.WriteProxy && <ContractInteractionMethods methods={writeMethods} />}
-        {tab === TabTypesEnum.ReadContract && <ContractInteractionMethods methods={readMethods}/>}
-        {tab === TabTypesEnum.WriteContract && <ContractInteractionMethods methods={writeMethods} />}
+        {tab === TabTypesEnum.ReadProxy && <ContractInteractionMethods methods={readMethods} methodsType='read' />}
+        {tab === TabTypesEnum.WriteProxy && <ContractInteractionMethods methods={writeMethods} methodsType='write' />}
+        {tab === TabTypesEnum.ReadContract && <ContractInteractionMethods methods={readMethods} methodsType='read'/>}
+        {tab === TabTypesEnum.WriteContract && <ContractInteractionMethods methods={writeMethods} methodsType='write' />}
       </div>
     </Card>
   )

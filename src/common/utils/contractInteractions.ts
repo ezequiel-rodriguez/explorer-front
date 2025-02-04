@@ -3,7 +3,7 @@ import { ParamType, FunctionFragment, FragmentType, ethers } from "ethers";
 /* ==== Rootstock ABI fragments formatting ===== */
 
 // Include internalType prop
-interface ExtendedInput extends ParamType {
+export interface ExtendedInput extends ParamType {
   internalType?: string;
 }
 
@@ -31,6 +31,7 @@ export type InteractiveMethod = {
   state: {
     inputs: string[];
     outputs: string[];
+    isRequesting: boolean;
     message: {
       content: string;
       style: string;
@@ -77,6 +78,7 @@ export function getInteractiveMethods(methods: RSKFunctionFragment[]): Interacti
         state: {
           inputs: method.inputs.map(_ => ''),
           outputs: method.outputs.map(_ => ''),
+          isRequesting: false,
           message: {
             content: '',
             style: ''

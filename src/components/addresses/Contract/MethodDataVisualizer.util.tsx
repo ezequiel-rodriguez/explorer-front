@@ -57,11 +57,11 @@ export default function MethodDataVisualizer ({ method, children }: { method: RS
   )
 }
 
-export function InteractiveMethodDataVisualizer ({ interactiveMethod }: { interactiveMethod: InteractiveMethod }) {
+export function InteractiveMethodDataVisualizer ({ interactiveMethod, className }: { interactiveMethod: InteractiveMethod, className?: string }) {
   const { method, signatureData, state } = interactiveMethod
   return (
-    <div>
-      <CIMAccordion title={`Interactive data (${method.name})`} className="mt-4">
+    <div className={className}>
+      <CIMAccordion title={`Interactive data (${method.name})`}>
         <div className="p-4">
           <h3 className="text-lg font-semibold text-white mb-2">Signature Data</h3>
           <div className="mb-4">
