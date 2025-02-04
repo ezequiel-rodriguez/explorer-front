@@ -33,47 +33,54 @@ function ContractInteractionMethods({ methods, methodsType }: ContractInteractio
     <div>
       {/* Wallet connection */}
       <WalletConnection />
-      {/* Contract functions */}
-      <div className='flex flex-col gap-2'>
-        {Object.values(interactiveMethods).map((interactiveMethod, i) => {
-          const { method, signatureData } = interactiveMethod
-          const index = i + 1
-          const methodTitleProps = {
-            index,
-            methodName: method.name,
-            selectorHash: signatureData.selector
-          }
+      {Object.values(interactiveMethods).length === 0 && (
+        <div className='text-white mt-4'>This contract has no methods to interact with.</div>
+      )}
+      {/* Contract methods */}
+      {Object.values(interactiveMethods).length > 0 && (
+        <div className='flex flex-col gap-2'>
+          {Object.values(interactiveMethods).map((interactiveMethod, i) => {
+            const { method, signatureData } = interactiveMethod
+            const index = i + 1
+            const methodTitleProps = {
+              index,
+              methodName: method.name,
+              selectorHash: signatureData.selector
+            }
 
-          return (
-            <CIMAccordion key={index} title={<MethodTitle {...methodTitleProps} />}>
-              <div className="p-2 flex flex-col gap-2">
-                {/* Debug */}
-                {/* <MethodDataVisualizer method={method} /> */}
-                {/* <InteractiveMethodDataVisualizer interactiveMethod={interactiveMethod} /> */}
+            return (
+              <CIMAccordion key={index} title={<MethodTitle {...methodTitleProps} />}>
+                <div className="p-2 flex flex-col gap-2">
+                  {/* Debug */}
+                  {/* <MethodDataVisualizer method={method} /> */}
+                  {/* <InteractiveMethodDataVisualizer interactiveMethod={interactiveMethod} /> */}
 
-                {/* Method Inputs */}
-                <div className='flex flex-col gap-2'>
-                  {method.inputs.map((input, inputIndex) => {
-                    return (
-                      <MethodInput
-                        key={inputIndex}
-                        input={input}
-                        inputIndex={inputIndex}
-                        value={interactiveMethod.state.inputs[inputIndex]}
-                        onChange={(e) => handleInputChange(interactiveMethod.signatureData.selector, inputIndex, e.target.value)}
-                      />
-                    )
-                  })}
-                </div>
-                {/* Method Action Button */}
-                <div>
+                  {/* Method Inputs */}
+                  {method.inputs.length > 0 && (
+                    <div className='flex flex-col gap-2'>
+                      {method.inputs.map((input, inputIndex) => {
+                        return (
+                          <MethodInput
+                            key={inputIndex}
+                            input={input}
+                            inputIndex={inputIndex}
+                            value={interactiveMethod.state.inputs[inputIndex]}
+                            onChange={(e) => handleInputChange(interactiveMethod.signatureData.selector, inputIndex, e.target.value)}
+                          />
+                        )
+                      })}
+                    </div>
+                  )}
+                  {/* Method Action Button */}
                   {methodsType === 'read' && (
-                    <MethodActionButton
-                      onClick={() => alert("Not implemented")}
-                      disabled={isBeingRequested(interactiveMethod)}
-                    >
-                      Query
-                    </MethodActionButton>
+                    <div>
+                      <MethodActionButton
+                        onClick={() => alert("Not implemented")}
+                        disabled={isBeingRequested(interactiveMethod)}
+                      >
+                        Query
+                      </MethodActionButton>
+                    </div>
                   )}
                   {methodsType === 'write' && (
                     <div className='flex gap-3'>
@@ -91,25 +98,27 @@ function ContractInteractionMethods({ methods, methodsType }: ContractInteractio
                       </MethodActionButton>
                     </div>
                   )}
+                  {/* Method Outputs */}
+                  {method.outputs.length > 0 && (
+                    <div className='flex flex-col gap-2'>
+                      {interactiveMethod.state.outputs.map((output, outputIndex) => {
+                        return (
+                          <MethodOutput
+                            key={outputIndex}
+                            outputIndex={outputIndex}
+                            value={output}
+                            interactiveMethod={interactiveMethod}
+                          />
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
-                {/* Method Outputs */}
-                <div className='flex flex-col gap-2'>
-                  {interactiveMethod.state.outputs.map((output, outputIndex) => {
-                    return (
-                      <MethodOutput
-                        key={outputIndex}
-                        outputIndex={outputIndex}
-                        value={output}
-                        interactiveMethod={interactiveMethod}
-                      />
-                    )
-                  })}
-                </div>
-              </div>
-            </CIMAccordion>
-          )
-        })}
-      </div>
+              </CIMAccordion>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -142,7 +151,7 @@ function MethodInput ({ input, inputIndex, value, onChange }: MethodInputProps) 
   const inputName = input.name || `Input ${inputIndex + 1}`
 
   return (
-    <div key={inputIndex} className='flex flex-col gap-1'>
+    <div key={inputIndex} className='flex flex-col gap-2'>
       <label className='flex gap-1 text-sm'>
         <span className='text-white'>{inputName}</span>
         <span className='text-[#b9b9b9]'>({input.type})</span>
