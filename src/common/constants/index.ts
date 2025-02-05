@@ -20,6 +20,10 @@ export const ROUTER = {
     BALANCES: '/balances',
     CONTRACT_VERIFICATION: '/addresses/verification'
   },
+  VERIFY: {
+    GET_SOLC: 'https://solc-bin.ethereum.org/bin/list.json',
+    GET_EVM: '/verifications/getEvmVersions',
+  },
   TOKENS: '/tokens',
   ITXS: {
     INDEX: '/itxs',

@@ -1,7 +1,5 @@
-import TableLoader from "@/components/loaders/TableLoader";
+import TableLoader from '@/components/loaders/TableLoader';
 
 export default function loading() {
-  return (
-    <TableLoader />
-  )
+  return <TableLoader />;
 }

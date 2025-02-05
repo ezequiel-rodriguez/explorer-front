@@ -1,7 +1,6 @@
-
 export interface IAddresses {
   id: number;
-  isVerified: boolean
+  isVerified: boolean;
   address: string;
   isNative: boolean;
   type: 'account' | 'contract';
@@ -9,50 +8,50 @@ export interface IAddresses {
   symbol?: string | null;
   balance: number;
   blockNumber: number;
-  code: string
-  deployedCode: string
+  code: string;
+  deployedCode: string;
   createdByTx?: {
-    timestamp: string
+    timestamp: string;
     receipt: {
-      transactionHash: string
-    }
-    internalTxId: string
-  }
-  interfaces: string[]
-  totalSupply: number
+      transactionHash: string;
+    };
+    internalTxId: string;
+  };
+  interfaces: string[];
+  totalSupply: number;
 }
 
 export interface IContractVerification {
-  id: string
-  match: boolean
-  abi: []
+  id: string;
+  match: boolean;
+  abi: [];
   request: {
-    name: string
-    bytecode: string
-    deployedBytecode: string
+    name: string;
+    bytecode: string;
+    deployedBytecode: string;
     imports: [
       {
-        contents: string
-        file: string
-      }
-    ]
-    version: string
+        contents: string;
+        file: string;
+      },
+    ];
+    version: string;
     settings: {
-      evmVersion: string
+      evmVersion: string;
       optimizer: {
-        enabled: boolean
-        runs: number
-      }
-    }
-  }
+        enabled: boolean;
+        runs: number;
+      };
+    };
+  };
   result: {
-    encodedConstructorArguments: string
-  }
+    encodedConstructorArguments: string;
+  };
   sources: [
     {
-      file: string
-      content: string
-    }
-  ]
-  timestamp: string
+      file: string;
+      content: string;
+    },
+  ];
+  timestamp: string;
 }

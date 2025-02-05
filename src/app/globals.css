@@ -5,30 +5,31 @@
 :root {
   --bg-primary: #000;
   --bg-secondary: #131313;
-  --gray-700: #3A3A3A;
+  --gray-700: #3a3a3a;
   --gray-600: #2a2a2a;
   --gray-500: #515151;
 
   --btn-secondary: #262626;
 
   --brand-purple: #9e76ff;
-  --brand-green: #79C600;
-  --brand-pink: #FF71E1;
-  --brand-orange: #FF9100;
-  --brand-cyan: #08FFD0;
+  --brand-green: #79c600;
+  --brand-pink: #ff71e1;
+  --brand-pink-dark: #ab4b96;
+  --brand-orange: #ff9100;
+  --brand-cyan: #08ffd0;
   --brand-yellow: #713f12;
   --brand-lime: #365314;
   --brand-red: #ff2323;
 
-  --white-100: #FBFBFB;
-  --white-400: #B8B8B8;
+  --white-100: #fbfbfb;
+  --white-400: #b8b8b8;
 
   --border: #484848;
 
-  --bg-success: #3D942099;
-  --text-success: #EAF4DB;
-  --bg-fail: #AA2F2F;
-  --text-fail: #F2CBCB;
+  --bg-success: #3d942099;
+  --text-success: #eaf4db;
+  --bg-fail: #aa2f2f;
+  --text-fail: #f2cbcb;
 }
 
 @media (prefers-color-scheme: dark) {

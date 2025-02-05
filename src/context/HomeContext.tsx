@@ -1,23 +1,22 @@
-'use client'
-import { ROUTER } from "@/common/constants";
-import { IBlocks } from "@/common/interfaces/Blocks";
-import { DataResponse } from "@/common/interfaces/IResponse";
-import { ITxs } from "@/common/interfaces/Txs";
-import { fetchData } from "@/services/api";
-import { createContext, useContext, useEffect, useState } from "react";
+'use client';
+import { ROUTER } from '@/common/constants';
+import { IBlocks } from '@/common/interfaces/Blocks';
+import { DataResponse } from '@/common/interfaces/IResponse';
+import { ITxs } from '@/common/interfaces/Txs';
+import { fetchData } from '@/services/api';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 interface IHomeContext {
-  lastBlock: IBlocks | undefined
-  blocks: IBlocks[] | undefined
-  txs: ITxs[] | undefined
-  autoUpdate: boolean
-  setAutoUpdate: React.Dispatch<React.SetStateAction<boolean>>
+  lastBlock: IBlocks | undefined;
+  blocks: IBlocks[] | undefined;
+  txs: ITxs[] | undefined;
+  autoUpdate: boolean;
+  setAutoUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const DataContext = createContext<IHomeContext | undefined>(undefined);
 
 export const HomeContext = ({ children }: { children: React.ReactNode }) => {
-  
   const [autoUpdate, setAutoUpdate] = useState<boolean>(false);
   const [lastBlock, setLastBlock] = useState<IBlocks | undefined>(undefined);
   const [blocks, setBlocks] = useState<IBlocks[] | undefined>(undefined);
@@ -30,12 +29,16 @@ export const HomeContext = ({ children }: { children: React.ReactNode }) => {
     const auptoupdate = localStorage.getItem('autoupdate');
     const value = auptoupdate === 'active' && true;
     setAutoUpdate(value);
-  }
-    
+  };
+
   // Latest block
   const fetchLatestBlock = async () => {
     const params = { take_data: 2 };
-    const response: DataResponse<IBlocks[]> = await fetchData<IBlocks[]>(ROUTER.BLOCKS.INDEX, params, 5);
+    const response: DataResponse<IBlocks[]> = await fetchData<IBlocks[]>(
+      ROUTER.BLOCKS.INDEX,
+      params,
+      5
+    );
     const latestBlock = response?.data[0];
     setLastBlock(latestBlock);
     saveLatesBlocksToCache(latestBlock);
@@ -45,14 +48,14 @@ export const HomeContext = ({ children }: { children: React.ReactNode }) => {
   };
   const loadBlockFromStorage = (): IBlocks | undefined => {
     const storedBlock = localStorage.getItem(CACHE_LATEST_BLOCK);
-    if (storedBlock) return JSON.parse(storedBlock)
+    if (storedBlock) return JSON.parse(storedBlock);
     return undefined;
   };
   const getLatestBlock = async () => {
     const cachedBlocks = loadBlockFromStorage();
     if (cachedBlocks) setLastBlock(cachedBlocks);
     await fetchLatestBlock();
-  }
+  };
 
   // Blocks
   const fetchBlocks = async () => {
@@ -60,7 +63,7 @@ export const HomeContext = ({ children }: { children: React.ReactNode }) => {
     const response = await fetchData<IBlocks[]>(ROUTER.BLOCKS.INDEX, params, 5);
     setBlocks(response?.data);
     saveBlocksToCache(response?.data);
-  }
+  };
 
   const loadBlocksFromCache = () => {
     const cachedData = localStorage.getItem(CACHE_BLOCK);
@@ -73,7 +76,7 @@ export const HomeContext = ({ children }: { children: React.ReactNode }) => {
   const saveBlocksToCache = (data: IBlocks[] | undefined) => {
     localStorage.setItem(CACHE_BLOCK, JSON.stringify(data));
   };
-    
+
   const getBlocks = async () => {
     const cachedBlocks = loadBlocksFromCache();
     if (cachedBlocks) setBlocks(cachedBlocks);
@@ -86,7 +89,7 @@ export const HomeContext = ({ children }: { children: React.ReactNode }) => {
     const response = await fetchData<ITxs[]>(ROUTER.TXS.INDEX, params, 5);
     setTxs(response?.data);
     saveTxsToCache(response?.data);
-  }
+  };
   const getTxs = async () => {
     const cachedTxs = loadTxsFromCache();
     if (cachedTxs) setTxs(cachedTxs);
@@ -104,13 +107,12 @@ export const HomeContext = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem(CACHE_TXS, JSON.stringify(data));
   };
 
-  
   useEffect(() => {
     loadAutoUpdate();
     getLatestBlock();
     getBlocks();
     getTxs();
-    
+
     const intervalId = setInterval(() => {
       if (autoUpdate) {
         getBlocks();
@@ -120,9 +122,9 @@ export const HomeContext = ({ children }: { children: React.ReactNode }) => {
     }, 3000);
 
     return () => clearInterval(intervalId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoUpdate]);
-  
+
   return (
     <DataContext.Provider
       value={{
@@ -130,18 +132,18 @@ export const HomeContext = ({ children }: { children: React.ReactNode }) => {
         blocks,
         txs,
         autoUpdate,
-        setAutoUpdate
+        setAutoUpdate,
       }}
     >
-      { children }
+      {children}
     </DataContext.Provider>
-  )
-}
+  );
+};
 
 export const useHomeDataContext = () => {
   const context = useContext(DataContext);
   if (!context) {
-    throw new Error("useHomeDataContext must be used within a DataProvider");
+    throw new Error('useHomeDataContext must be used within a DataProvider');
   }
   return context;
-}
+};

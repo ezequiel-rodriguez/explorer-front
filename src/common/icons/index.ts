@@ -1,6 +1,7 @@
 // /common/icons/index.ts
 export { default as ArrowLeftIcon } from './ArrowLeftIcon';
 export { default as ArrowRightIcon } from './ArrowRightIcon';
+export { default as ArrowDownIcon } from './ArrowDownIcon';
 export { default as HomeIcon } from './HomeIcon';
 export { default as HomeActiveIcon } from './HomeActiveIcon';
 export { default as BlockIcon } from './BlockIcon';
