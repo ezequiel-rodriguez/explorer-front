@@ -45,12 +45,12 @@ export type InteractiveMethodsDict = {
 
 const formatTuple = (input: ExtendedInput) => `(${input.components!.map(component => component.type).join(',')})`
 
+// TODO: reconstruct signatures recursively
 export function getMethodSignatureData (method: RSKFunctionFragment): SignatureData {
   const name = method.name
   const params = method.inputs.map(input => {
     const isTupleInput = input.type === 'tuple' && input.components
 
-    // figure out how to handle tuple inputs for contract reads (5 mins)
     if (isTupleInput) {
       return formatTuple(input)
     }
@@ -105,6 +105,7 @@ export const emptyString = (input: string) => input === '';
 
 export const isArrayType = (type: string) => type.includes('[]');
 
+// TODO: validate recursively
 export const validateAndFormatInputs = (interactiveMethod: InteractiveMethod) => {
   /* Input Validations */
   const { method, signatureData, state } = interactiveMethod;
