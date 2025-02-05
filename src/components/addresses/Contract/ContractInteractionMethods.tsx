@@ -4,9 +4,10 @@ import MethodDataVisualizer, { InteractiveMethodDataVisualizer } from './MethodD
 import { InteractiveMethod, InteractiveMethodsDict, RSKFunctionFragment, getInteractiveMethods, isBeingRequested, parseOutputs, validateAndFormatInputs } from '@/common/utils/contractInteractions';
 import { WalletConnection } from '@/components/web3/Web3Components';
 import OutputIcon from '@/common/icons/OutputIcon';
-import { useAccount } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
+import { readContract, writeContract, simulateContract, getAccount } from '@wagmi/core'
 import { wagmiConfig } from '@/context/Web3Provider';
-import { readContract } from '@wagmi/core'
+import { CHAIN_ID } from '@/common/constants';
 
 type MethodType = 'read' | 'write'
 
@@ -19,6 +20,8 @@ interface ContractInteractionMethodsProps {
 function ContractInteractionMethods({ contractAddress, methods, methodsType }: ContractInteractionMethodsProps) {
   const [interactiveMethods, setInteractiveMethods] = useState<InteractiveMethodsDict>(getInteractiveMethods(methods));
   const { address, isConnected } = useAccount()
+  const account = getAccount(wagmiConfig)
+  const { chains, switchChain } = useSwitchChain()
 
   const handleInputChange = (selector: string, inputIndex: number, value: string) => {
     setInteractiveMethods(prevMethods => {
@@ -59,7 +62,7 @@ function ContractInteractionMethods({ contractAddress, methods, methodsType }: C
         // account (in case of connected wallet)
         account: isConnected ? address : undefined,
         // chain id
-        chainId: 31
+        chainId: CHAIN_ID
       })
 
       let outputs: any[];
@@ -90,6 +93,109 @@ function ContractInteractionMethods({ contractAddress, methods, methodsType }: C
       });
     } catch (error: any) {
       console.error("Error reading contract");
+      console.error(error);
+      
+      setInteractiveMethods(prevMethods => {
+        const { signatureData } = interactiveMethod;
+        const updatedMethods = { ...prevMethods };
+
+        updatedMethods[signatureData.selector].state.message = {
+          content: <ErrorDisplay error={error} /> as React.JSX.Element,
+          style: 'text-red-500'
+        };
+        return updatedMethods;
+      })
+    }
+
+    // Reset requesting state
+    setInteractiveMethods(prevMethods => {
+      const updatedMethods = { ...prevMethods };
+      updatedMethods[interactiveMethod.signatureData.selector].state.isRequesting = false;
+      return updatedMethods;
+    });
+  };
+
+  const handleWriteClick = async (interactiveMethod: InteractiveMethod, action: 'write' | 'simulate') => {
+    try {
+      const { method, signatureData } = interactiveMethod;
+
+      setInteractiveMethods(prevMethods => {
+        // Set write message
+        const updatedMethods = { ...prevMethods };
+        updatedMethods[signatureData.selector].state.message = {
+          content: action === 'write' ? 'Writing to contract...' : 'Simulating contract...',
+          style: 'text-white'
+        };
+
+        // Set requesting state
+        updatedMethods[signatureData.selector].state.isRequesting = true;
+        return updatedMethods;
+      })
+
+      const payload = {
+        // method to write
+        abi: [method],
+        // method name or signature.
+        // FUTURE: Check border case: overloads. Use a verified test contract with overloads for this
+        functionName: signatureData.name,
+        // method inputs
+        args: validateAndFormatInputs(interactiveMethod),
+        // contract address
+        address: contractAddress as unknown as `0x${string}`,
+        // account (in case of connected wallet)
+        account: isConnected ? address : undefined,
+        // chain id
+        chainId: CHAIN_ID
+      }
+
+      // Contract Write
+      if (action === 'write') {
+        const { request } = await simulateContract(wagmiConfig, payload)
+        const hash: any = await writeContract(wagmiConfig, request)
+        console.log(`Transaction hash: ${hash}`);
+
+        // set hash
+        setInteractiveMethods(prevMethods => {
+          const updatedMethods = { ...prevMethods };
+          updatedMethods[signatureData.selector].state.message = {
+            content: `Transaction hash: ${hash}`,
+            style: 'text-green-500'
+          };
+          return updatedMethods;
+        })
+      } else {
+        // Contract simulation
+        const { result: simulationResult } = await simulateContract(wagmiConfig, payload)
+
+        let outputs: any[];
+
+        // Array type outputs
+        if (method.outputs.length === 1) {
+          // method has only one output. Wrap it in an array
+          outputs = [simulationResult];
+        } else {
+          // method has multiple outputs. Use the result as is
+          outputs = simulationResult;
+        }
+
+        // Contract Result display
+        setInteractiveMethods(prevMethods => {
+          const updatedMethods = { ...prevMethods };
+
+          // Update outputs
+          updatedMethods[signatureData.selector].state.outputs = parseOutputs(outputs);
+
+          // Reset message
+          updatedMethods[signatureData.selector].state.message = {
+            content: '',
+            style: ''
+          };
+
+          return updatedMethods;
+        });
+      }
+    } catch (error: any) {
+      console.error("Error writing contract");
       console.error(error);
       
       setInteractiveMethods(prevMethods => {
@@ -167,13 +273,13 @@ function ContractInteractionMethods({ contractAddress, methods, methodsType }: C
                   {methodsType === 'write' && (
                     <div className='flex gap-3'>
                       <MethodActionButton
-                        onClick={() => alert("Not implemented")}
+                        onClick={() => handleWriteClick(interactiveMethod, 'simulate')}
                         disabled={!isConnected || isBeingRequested(interactiveMethod)}
                       >
                         Simulate
                       </MethodActionButton>
                       <MethodActionButton
-                        onClick={() => alert("Not implemented")}
+                        onClick={() => handleWriteClick(interactiveMethod, 'write')}
                         disabled={!isConnected || isBeingRequested(interactiveMethod)}
                       >
                         Write
@@ -276,11 +382,13 @@ function MethodOutput ({ outputIndex, value, interactiveMethod }: MethodOutputPr
   }
 
   return (
-    <div className='flex gap-1 items-center'>
-      <OutputIcon />
-      <div className='flex gap-1'>
-        <span className='text-[#b9b9b9]'>{outputType}:</span>
-        <span>{value}</span>
+    <div className='flex flex-wrap items-center gap-2lg'>
+      <div className='flex items-center gap-2'>
+        <OutputIcon />
+        <span className='text-[#b9b9b9] font-semibold'>{outputType}:</span>
+      </div>
+      <div className='flex items-center overflow-x-auto max-w-full'>
+        <span className='whitespace-nowrap p-1 rounded-md'>{value}</span>
       </div>
     </div>
   )

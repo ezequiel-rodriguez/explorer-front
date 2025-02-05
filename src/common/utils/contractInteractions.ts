@@ -123,7 +123,6 @@ export const validateAndFormatInputs = (interactiveMethod: InteractiveMethod) =>
       input = input.trim();
 
       const inputType = method.inputs[inputIndex].type;
-      console.log(`Parsing input ${inputIndex + 1} (type: ${inputType}) with value ${input}`);
 
       // Array types: validate format and parse
       if (isArrayType(inputType)) {
@@ -214,62 +213,54 @@ export const validateAndFormatInputs = (interactiveMethod: InteractiveMethod) =>
       }
 
       console.log('Warning. Input validation not implemented for this type. Returning input as is.');
-      console.log({ inputType, input });
       return input;
   });
 }
 
-// FUTURE: validate recursive outputs (eg: tuple of tuples, tuple of arrays, array of tuples, etc.)
 export const parseOutputs = (outputs: any[]): string[] => {
-  // Check for bigints and convert them to strings
-  return outputs.map(output => {
+  const parseValue = (value: any): any => {
+    if (typeof value === 'boolean') {
+      return String(value);
+    }
+
+    if (typeof value === 'bigint') {
+      return BigInt(value).toString();
+    }
+
+    if (Array.isArray(value)) {
+      return value.map(parseValue); // No stringify arrays
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      const parsedObject: { [key: string]: any } = {};
+      for (const [key, val] of Object.entries(value)) {
+        parsedObject[key] = parseValue(val);
+      }
+
+      // Stringify complex objects, but not arrays within them
+      return parsedObject;
+    }
+
+    return value;
+  };
+
+  const parsedOutputs = outputs.map(output => {
     try {
-      // simple outputs
-      if (typeof output === 'bigint' || typeof output === 'number') {
-        const bigInt = BigInt(output);
-        return bigInt.toString();
-      }
-
-      // array outputs
-      if (Array.isArray(output)) {
-        const outputValues = output.map(o => {
-          if (typeof o === 'bigint' || typeof o === 'number') {
-            const bigInt = BigInt(o);
-            return bigInt.toString();
-          }
-          return o;
-        });
-
-        return JSON.stringify(outputValues);
-      }
-
-      // object outputs (tuples)
-      if (typeof output === 'object') {
-        const outputValues = Object.values(output);
-
-        for (const value of outputValues) {
-          if (typeof value === 'bigint' || typeof value === 'number') {
-            const bigInt = BigInt(value);
-            outputValues[outputValues.indexOf(value)] = bigInt.toString();
-          }
-        }
-
-        return JSON.stringify(outputValues);
-      }
-
-      // other cases
-      return JSON.stringify(output);
-    } catch(error) {
+      const parsedOutput = parseValue(output);
+      return typeof parsedOutput === 'object' ? JSON.stringify(parsedOutput, null, 2) : parsedOutput;
+    } catch (error) {
       console.log({
         msg: "Error parsing output",
         output,
         error
       });
 
-      throw new Error('Error parsing output. Internal Error');
+      return 'Error parsing output. Internal Error';
     }
   });
-}
+
+  return parsedOutputs;
+};
 
 /* ===== RSK ABI Fragments utils ===== */
 
