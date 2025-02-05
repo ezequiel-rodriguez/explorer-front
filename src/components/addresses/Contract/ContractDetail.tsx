@@ -39,13 +39,16 @@ const tabs = [
 
 function ContractDetail() {
   const [tab, setTab] = useState<TabType>(tabTypes.general);
-  const { address, contractVerification } = useAddressDataContext()
+  const { address: addressData, contractVerification } = useAddressDataContext()
 
-  if (!contractVerification) return
+  if (!addressData || !contractVerification) return
 
-  // TODO: Create ABI selector depending if contract is normal, proxy or native
   const isProxy = false;
   const isBridge = false;
+  // TODO: Define contractAddress and proxyContractAddress depending if main contract is normal, proxy or native
+  const contractAddress = addressData.address;
+
+  // TODO: Create ABI selector depending if main contract is normal, proxy or native
   const { abi } = contractVerification as { abi: RSKFunctionFragment[] }
 
   const readMethods = rskFragmentsUtils.getReadMethods(abi);
@@ -66,10 +69,10 @@ function ContractDetail() {
       {/* Tabs */}
       <div className='mt-5'>
         {tab === TabTypesEnum.General && <ContractGeneral />}
-        {tab === TabTypesEnum.ReadProxy && <ContractInteractionMethods methods={readMethods} methodsType='read' />}
-        {tab === TabTypesEnum.WriteProxy && <ContractInteractionMethods methods={writeMethods} methodsType='write' />}
-        {tab === TabTypesEnum.ReadContract && <ContractInteractionMethods methods={readMethods} methodsType='read'/>}
-        {tab === TabTypesEnum.WriteContract && <ContractInteractionMethods methods={writeMethods} methodsType='write' />}
+        {tab === TabTypesEnum.ReadProxy && <ContractInteractionMethods contractAddress={contractAddress} methods={readMethods} methodsType='read' />}
+        {tab === TabTypesEnum.WriteProxy && <ContractInteractionMethods contractAddress={contractAddress} methods={writeMethods} methodsType='write' />}
+        {tab === TabTypesEnum.ReadContract && <ContractInteractionMethods contractAddress={contractAddress} methods={readMethods} methodsType='read'/>}
+        {tab === TabTypesEnum.WriteContract && <ContractInteractionMethods contractAddress={contractAddress} methods={writeMethods} methodsType='write' />}
       </div>
     </Card>
   )

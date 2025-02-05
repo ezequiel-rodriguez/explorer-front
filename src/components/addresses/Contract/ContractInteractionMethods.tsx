@@ -1,21 +1,24 @@
 import CIMAccordion from '@/components/ui/CIMAccordion'
 import React, { useState } from 'react'
 import MethodDataVisualizer, { InteractiveMethodDataVisualizer } from './MethodDataVisualizer.util'
-import { ExtendedInput, InteractiveMethod, InteractiveMethodsDict, RSKFunctionFragment, getInteractiveMethods } from '@/common/utils/contractInteractions';
+import { InteractiveMethod, InteractiveMethodsDict, RSKFunctionFragment, getInteractiveMethods, isBeingRequested, parseOutputs, validateAndFormatInputs } from '@/common/utils/contractInteractions';
 import { WalletConnection } from '@/components/web3/Web3Components';
 import OutputIcon from '@/common/icons/OutputIcon';
 import { useAccount } from 'wagmi';
+import { wagmiConfig } from '@/context/Web3Provider';
+import { readContract } from '@wagmi/core'
 
 type MethodType = 'read' | 'write'
 
 interface ContractInteractionMethodsProps {
+  contractAddress: string
   methods: RSKFunctionFragment[]
   methodsType: MethodType
 }
 
-function ContractInteractionMethods({ methods, methodsType }: ContractInteractionMethodsProps) {
+function ContractInteractionMethods({ contractAddress, methods, methodsType }: ContractInteractionMethodsProps) {
   const [interactiveMethods, setInteractiveMethods] = useState<InteractiveMethodsDict>(getInteractiveMethods(methods));
-  const { isConnected } = useAccount()
+  const { address, isConnected } = useAccount()
 
   const handleInputChange = (selector: string, inputIndex: number, value: string) => {
     setInteractiveMethods(prevMethods => {
@@ -25,9 +28,89 @@ function ContractInteractionMethods({ methods, methodsType }: ContractInteractio
     });
   };
 
-  const isBeingRequested = (interactiveMethod: InteractiveMethod) => {
-    return interactiveMethod.state.isRequesting;
-  }
+  const handleReadClick = async (interactiveMethod: InteractiveMethod) => {
+    try {
+      const { method, signatureData } = interactiveMethod;
+
+      setInteractiveMethods(prevMethods => {
+        // Set call message
+        const updatedMethods = { ...prevMethods };
+        updatedMethods[signatureData.selector].state.message = {
+          content: 'Calling contract...',
+          style: 'text-white'
+        };
+
+        // Set requesting state
+        updatedMethods[signatureData.selector].state.isRequesting = true;
+        return updatedMethods;
+      })
+
+      // Contract call
+      const result: any = await readContract(wagmiConfig, {
+        // method to read
+        abi: [method],
+        // method name or signature.
+        // FUTURE: Check border case: overloads. Use a verified test contract with overloads for this
+        functionName: signatureData.name,
+        // method inputs
+        args: validateAndFormatInputs(interactiveMethod),
+        // contract address
+        address: contractAddress as unknown as `0x${string}`,
+        // account (in case of connected wallet)
+        account: isConnected ? address : undefined,
+        // chain id
+        chainId: 31
+      })
+
+      let outputs: any[];
+
+      // Array type outputs
+      if (method.outputs.length === 1) {
+        // method has only one output. Wrap it in an array
+        outputs = [result];
+      } else {
+        // method has multiple outputs. Use the result as is
+        outputs = result;
+      }
+
+      // Contract Result display
+      setInteractiveMethods(prevMethods => {
+        const updatedMethods = { ...prevMethods };
+
+        // Update outputs
+        updatedMethods[signatureData.selector].state.outputs = parseOutputs(outputs);
+
+        // Reset message
+        updatedMethods[signatureData.selector].state.message = {
+          content: '',
+          style: ''
+        };
+
+        return updatedMethods;
+      });
+    } catch (error: any) {
+      console.error("Error reading contract");
+      console.error(error);
+      
+      setInteractiveMethods(prevMethods => {
+        const { signatureData } = interactiveMethod;
+        const updatedMethods = { ...prevMethods };
+
+        updatedMethods[signatureData.selector].state.message = {
+          content: <ErrorDisplay error={error} /> as React.JSX.Element,
+          style: 'text-red-500'
+        };
+        return updatedMethods;
+      })
+    }
+
+    // Reset requesting state
+    setInteractiveMethods(prevMethods => {
+      const updatedMethods = { ...prevMethods };
+      updatedMethods[interactiveMethod.signatureData.selector].state.isRequesting = false;
+      return updatedMethods;
+    });
+  };
 
   return (
     <div>
@@ -52,8 +135,8 @@ function ContractInteractionMethods({ methods, methodsType }: ContractInteractio
               <CIMAccordion key={index} title={<MethodTitle {...methodTitleProps} />}>
                 <div className="p-2 flex flex-col gap-2">
                   {/* Debug */}
-                  {/* <MethodDataVisualizer method={method} /> */}
-                  {/* <InteractiveMethodDataVisualizer interactiveMethod={interactiveMethod} /> */}
+                  <MethodDataVisualizer method={method} />
+                  <InteractiveMethodDataVisualizer interactiveMethod={interactiveMethod} />
 
                   {/* Method Inputs */}
                   {method.inputs.length > 0 && (
@@ -62,9 +145,8 @@ function ContractInteractionMethods({ methods, methodsType }: ContractInteractio
                         return (
                           <MethodInput
                             key={inputIndex}
-                            input={input}
                             inputIndex={inputIndex}
-                            value={interactiveMethod.state.inputs[inputIndex]}
+                            interactiveMethod={interactiveMethod}
                             onChange={(e) => handleInputChange(interactiveMethod.signatureData.selector, inputIndex, e.target.value)}
                           />
                         )
@@ -75,7 +157,7 @@ function ContractInteractionMethods({ methods, methodsType }: ContractInteractio
                   {methodsType === 'read' && (
                     <div>
                       <MethodActionButton
-                        onClick={() => alert("Not implemented")}
+                        onClick={() => handleReadClick(interactiveMethod)}
                         disabled={isBeingRequested(interactiveMethod)}
                       >
                         Query
@@ -99,6 +181,9 @@ function ContractInteractionMethods({ methods, methodsType }: ContractInteractio
                     </div>
                   )}
                   {/* Method Outputs */}
+                  {method.outputs.length === 0 && (
+                    <div className='text-sm text-[#b9b9b9]'>(this method has no outputs)</div>
+                  )}
                   {method.outputs.length > 0 && (
                     <div className='flex flex-col gap-2'>
                       {interactiveMethod.state.outputs.map((output, outputIndex) => {
@@ -113,6 +198,12 @@ function ContractInteractionMethods({ methods, methodsType }: ContractInteractio
                       })}
                     </div>
                   )}
+                  {/* Message */}
+                  {interactiveMethod.state.message.content && (
+                    <div className={`text-sm ${interactiveMethod.state.message.style}`}>
+                      {interactiveMethod.state.message.content}
+                    </div>
+                  )}
                 </div>
               </CIMAccordion>
             )
@@ -123,15 +214,13 @@ function ContractInteractionMethods({ methods, methodsType }: ContractInteractio
   )
 }
 
-const MethodTitle = ({
-  index,
-  methodName,
-  selectorHash
-}: {
+interface MethodTitleProps {
   index: number
   methodName: string
   selectorHash: string
-}): React.ReactNode => {
+}
+
+function MethodTitle ({ index, methodName, selectorHash }: MethodTitleProps) {
   return (
     <div className='flex gap-1 items-center'>
       <span className='text-sm'>{index}. {methodName}</span>
@@ -141,26 +230,29 @@ const MethodTitle = ({
 }
 
 interface MethodInputProps {
-  input: ExtendedInput
   inputIndex: number
-  value: string
+  interactiveMethod: InteractiveMethod
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-function MethodInput ({ input, inputIndex, value, onChange }: MethodInputProps) {
+function MethodInput ({ inputIndex, interactiveMethod, onChange }: MethodInputProps) {
+  const { signatureData } = interactiveMethod
+  const input = interactiveMethod.method.inputs[inputIndex]
   const inputName = input.name || `Input ${inputIndex + 1}`
+  const isTuple = input.type === 'tuple'
+  const inputType = isTuple ? `tuple${signatureData.params[inputIndex]}` : `${input.type}`
 
   return (
     <div key={inputIndex} className='flex flex-col gap-2'>
       <label className='flex gap-1 text-sm'>
         <span className='text-white'>{inputName}</span>
-        <span className='text-[#b9b9b9]'>({input.type})</span>
+        <span className='text-[#b9b9b9]'>({inputType})</span>
       </label>
       <input type="text"
         name={input.name}
-        placeholder={`${inputName} (${input.type})`}
+        placeholder={`${inputName} (${inputType})`}
         className='bg-[#262626] p-2 border border-line rounded-md outline-none'
-        value={value}
+        value={interactiveMethod.state.inputs[inputIndex]}
         onChange={onChange}
       />
     </div>
@@ -174,7 +266,14 @@ interface MethodOutputProps {
 }
 
 function MethodOutput ({ outputIndex, value, interactiveMethod }: MethodOutputProps) {
-  const outputType = interactiveMethod.method.outputs[outputIndex].type
+  const isTuple = interactiveMethod.method.outputs[outputIndex].type === 'tuple'
+  let outputType: string;
+
+  if (isTuple) {
+    outputType = `tuple(${interactiveMethod.method.outputs[outputIndex].components!.map(c => c.type).join(',')})`
+  } else {
+    outputType = interactiveMethod.method.outputs[outputIndex].type
+  }
 
   return (
     <div className='flex gap-1 items-center'>
@@ -201,6 +300,17 @@ function MethodActionButton({ children, onClick, disabled }: MethodActionButtonP
       disabled={disabled}
     >{children}</button>
   )
+}
+
+
+interface ErrorDisplayProps {
+  error: Error;
+}
+
+function ErrorDisplay({ error }: ErrorDisplayProps) {
+  return (
+    <span className='text-xs'>Error: {error.message}</span>
+  );
 }
 
 export default ContractInteractionMethods

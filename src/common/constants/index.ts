@@ -1,5 +1,9 @@
 export const API_URL = process.env.API_URL;
 
+export const NETWORK = process.env.NETWORK;
+
+export const CHAIN_ID = NETWORK === 'mainnet' ? 30 : 31 as 30 | 31
+
 export const ROUTER = {
   HOME: '/',
   STATS: '/stats',
