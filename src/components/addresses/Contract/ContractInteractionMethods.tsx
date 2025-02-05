@@ -4,7 +4,7 @@ import MethodDataVisualizer, { InteractiveMethodDataVisualizer } from './MethodD
 import { InteractiveMethod, InteractiveMethodsDict, RSKFunctionFragment, getInteractiveMethods, isBeingRequested, parseOutputs, validateAndFormatInputs } from '@/common/utils/contractInteractions';
 import { WalletConnection } from '@/components/web3/Web3Components';
 import OutputIcon from '@/common/icons/OutputIcon';
-import { useAccount } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 import { readContract, writeContract, simulateContract } from '@wagmi/core'
 import { wagmiConfig } from '@/context/Web3Provider';
 import { CHAIN_ID } from '@/common/constants';
@@ -21,9 +21,16 @@ function ContractInteractionMethods({ contractAddress, methods, methodsType }: C
   const [interactiveMethods, setInteractiveMethods] = useState<InteractiveMethodsDict>(getInteractiveMethods(methods));
   const { address, isConnected } = useAccount()
   const [expandAll, setExpandAll] = useState(false);
+  const { disconnect: disconnectWallet } = useDisconnect()
 
   const toggleExpansion = () => {
     setExpandAll(!expandAll);
+  };
+
+  const resetComponent = () => {
+    setInteractiveMethods(getInteractiveMethods(methods));
+    setExpandAll(false);
+    disconnectWallet()
   };
 
   const handleInputChange = (selector: string, inputIndex: number, value: string) => {
@@ -235,12 +242,18 @@ function ContractInteractionMethods({ contractAddress, methods, methodsType }: C
           )}
         </div>
         {/* General control buttons */}
-        <div>
+        <div className='flex gap-2'>
           <button
             onClick={toggleExpansion}
             className='text-[#FF71E1] hover:text-[#FF71E1cc] text-xs bg-transparent hover:underline'
           >
             {expandAll ? '[Collapse all]' : '[Expand all]'}
+          </button>
+          <button
+            onClick={resetComponent}
+            className='text-[#FF71E1] hover:text-[#FF71E1cc] text-xs bg-transparent hover:underline'
+          >
+            [Reset]
           </button>
         </div>
       </div>

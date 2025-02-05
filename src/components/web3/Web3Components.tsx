@@ -13,7 +13,7 @@ export function ConnectButton({ connect, showDisclaimer = true }: { connect: () 
   return (
     <button
       onClick={showDisclaimer ? showDisclaimerAndConnect : connect}
-      className="bg-[#FF71E1] text-black py-1 px-2 rounded-md text-sm"
+      className="bg-[#FF71E1] hover:bg-[#FF85E6] text-black py-1 px-2 rounded-md text-sm"
     >
       Connect Wallet
     </button>
@@ -43,7 +43,7 @@ export function DisconnectButton({ disconnect }: { disconnect: () => void }) {
   return (
     <button
       onClick={() => disconnect()}
-      className="bg-[#FF71E1] text-black py-1 px-2 rounded-lg text-sm"
+      className="bg-[#FF71E1] hover:bg-[#FF85E6] text-black py-1 px-2 rounded-lg text-sm"
     > 
       Disconnect
     </button>
