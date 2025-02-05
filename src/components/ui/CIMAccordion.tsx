@@ -1,19 +1,24 @@
 'use client'
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type Props = {
   title: string | React.ReactNode;
   className?: string;
   children: React.ReactNode;
+  isOpen: boolean;
 };
 
-const CIMAccordion = ({ title, className, children }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+const CIMAccordion = ({ title, className, children, isOpen }: Props) => {
+  const [isAccordionOpen, setIsAccordionOpen] = useState(isOpen);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setIsAccordionOpen(isOpen);
+  }, [isOpen]);
+
   const toggleAccordion = () => {
-    setIsOpen(!isOpen);
+    setIsAccordionOpen(!isAccordionOpen);
   };
 
   return (
@@ -21,16 +26,16 @@ const CIMAccordion = ({ title, className, children }: Props) => {
       {/* Button to toggle accordion */}
       <button
         onClick={toggleAccordion}
-        className={`w-full flex justify-between items-center bg-[#262626] text-white px-4 py-2 transition-all duration-300 ${isOpen ? 'rounded-t-xl' : 'rounded-xl'}`}
+        className={`w-full flex justify-between items-center bg-[#262626] text-white px-4 py-2 transition-all duration-300 ${isAccordionOpen ? 'rounded-t-xl' : 'rounded-xl'}`}
       >
         {title}
-        <span className="text-md">{isOpen ? "< >" : "<>"}</span>
+        <span className="text-md">{isAccordionOpen ? "< >" : "<>"}</span>
       </button>
 
       {/* Accordion Content Wrapper */}
       <div
         className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-          isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          isAccordionOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         }`}
       >
         {/* Accordion Content */}

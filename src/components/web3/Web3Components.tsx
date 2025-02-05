@@ -13,7 +13,7 @@ export function ConnectButton({ connect, showDisclaimer = true }: { connect: () 
   return (
     <button
       onClick={showDisclaimer ? showDisclaimerAndConnect : connect}
-      className="bg-[#FF71E1] text-black py-1 px-2 rounded-lg text-sm"
+      className="bg-[#FF71E1] text-black py-1 px-2 rounded-md text-sm"
     >
       Connect Wallet
     </button>
@@ -30,7 +30,7 @@ export function WalletOptions() {
   }
 
   return (
-    <div className='mb-4 flex gap-3'>
+    <div className='flex gap-3'>
       <ConnectButton
         connect={() => connect({ connector: metamaskConnector })}
         showDisclaimer
@@ -64,7 +64,7 @@ export function WalletAccount () {
   const { disconnect } = useDisconnect()
 
   return (
-    <div className="mb-4 flex items-center text-white rounded-lg">
+    <div className="flex items-center text-white rounded-lg">
       {address && (
         <div className="flex gap-2">
           <DisconnectButton disconnect={disconnect} />

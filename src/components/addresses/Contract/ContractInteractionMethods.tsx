@@ -4,8 +4,8 @@ import MethodDataVisualizer, { InteractiveMethodDataVisualizer } from './MethodD
 import { InteractiveMethod, InteractiveMethodsDict, RSKFunctionFragment, getInteractiveMethods, isBeingRequested, parseOutputs, validateAndFormatInputs } from '@/common/utils/contractInteractions';
 import { WalletConnection } from '@/components/web3/Web3Components';
 import OutputIcon from '@/common/icons/OutputIcon';
-import { useAccount, useSwitchChain } from 'wagmi';
-import { readContract, writeContract, simulateContract, getAccount } from '@wagmi/core'
+import { useAccount } from 'wagmi';
+import { readContract, writeContract, simulateContract } from '@wagmi/core'
 import { wagmiConfig } from '@/context/Web3Provider';
 import { CHAIN_ID } from '@/common/constants';
 
@@ -20,8 +20,11 @@ interface ContractInteractionMethodsProps {
 function ContractInteractionMethods({ contractAddress, methods, methodsType }: ContractInteractionMethodsProps) {
   const [interactiveMethods, setInteractiveMethods] = useState<InteractiveMethodsDict>(getInteractiveMethods(methods));
   const { address, isConnected } = useAccount()
-  const account = getAccount(wagmiConfig)
-  const { chains, switchChain } = useSwitchChain()
+  const [expandAll, setExpandAll] = useState(false);
+
+  const toggleExpansion = () => {
+    setExpandAll(!expandAll);
+  };
 
   const handleInputChange = (selector: string, inputIndex: number, value: string) => {
     setInteractiveMethods(prevMethods => {
@@ -219,9 +222,28 @@ function ContractInteractionMethods({ contractAddress, methods, methodsType }: C
   };
 
   return (
-    <div>
-      {/* Wallet connection */}
-      <WalletConnection />
+    <div className='flex flex-col gap-3'>
+      <div className='flex justify-between'>
+        <div className='flex gap-2 items-center'>
+          {/* Wallet connection */}
+          <WalletConnection />
+          {/* Wallet connected required for write methods message */}
+          {methodsType === 'write' && !isConnected && (
+            <div className='h-fit w-fit bg-[#AA2F2F96] px-1 rounded-md flex justify-center items-center'>
+              <p className='text-sm text-[#F2CBCB] rounded-md'>Wallet must be connected to call functions.</p>
+            </div>
+          )}
+        </div>
+        {/* General control buttons */}
+        <div>
+          <button
+            onClick={toggleExpansion}
+            className='text-[#FF71E1] hover:text-[#FF71E1cc] text-xs bg-transparent hover:underline'
+          >
+            {expandAll ? '[Collapse all]' : '[Expand all]'}
+          </button>
+        </div>
+      </div>
       {Object.values(interactiveMethods).length === 0 && (
         <div className='text-white mt-4'>This contract has no methods to interact with.</div>
       )}
@@ -238,11 +260,11 @@ function ContractInteractionMethods({ contractAddress, methods, methodsType }: C
             }
 
             return (
-              <CIMAccordion key={index} title={<MethodTitle {...methodTitleProps} />}>
+              <CIMAccordion key={index} title={<MethodTitle {...methodTitleProps} />} isOpen={expandAll}>
                 <div className="p-2 flex flex-col gap-2">
                   {/* Debug */}
-                  <MethodDataVisualizer method={method} />
-                  <InteractiveMethodDataVisualizer interactiveMethod={interactiveMethod} />
+                  {/* <MethodDataVisualizer method={method} /> */}
+                  {/* <InteractiveMethodDataVisualizer interactiveMethod={interactiveMethod} /> */}
 
                   {/* Method Inputs */}
                   {method.inputs.length > 0 && (
