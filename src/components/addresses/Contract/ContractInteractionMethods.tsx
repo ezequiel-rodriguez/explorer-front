@@ -24,16 +24,14 @@ interface ContractInteractionMethodsProps {
 
 function ContractInteractionMethods({ contractAddress, methods, methodsType, unverifiedImplementationData }: ContractInteractionMethodsProps) {
   if(unverifiedImplementationData.show) {
-    // hardcode implementation address until we can test a verified proxy with unverified implementation
-    // const implementationAddress = unverifiedImplementationData.implementationAddress;
-    const implementationAddress = contractAddress;
+    const implementationAddress = unverifiedImplementationData.implementationAddress;
     return (
       <div className="w-full rounded-xl flex flex-col justify-center text-[#b9b9b9]">
         <h2 className="text-xl font-bold mb-4">[ERC1967 Proxy Contract Detected]</h2>
         <p className='text-sm'>This contract is a proxy and cannot be interacted with directly.</p>
         <p className='text-sm'>
           <span>Implementation address: </span>
-          <Link href={`/addresses/${implementationAddress}`}>
+          <Link href={`/addresses/${implementationAddress}`} target='_blank'>
             <span className='text-white'>{implementationAddress}</span>
           </Link>
         </p>
@@ -194,7 +192,7 @@ function ContractInteractionMethods({ contractAddress, methods, methodsType, unv
         setInteractiveMethods(prevMethods => {
           const updatedMethods = { ...prevMethods };
           updatedMethods[signatureData.selector].state.message = {
-            content: `Transaction hash: ${hash}`,
+            content: <TransactionHashDisplay hash={hash} />,
             style: 'text-green-500'
           };
           return updatedMethods;
@@ -282,6 +280,12 @@ function ContractInteractionMethods({ contractAddress, methods, methodsType, unv
             [Reset]
           </button>
         </div>
+      </div>
+      <div className='flex gap-1 text-sm'>
+        <span className="text-white-400">Interacting with contract</span>
+        <Link href={`/addresses/${contractAddress}?tab=contract`} target='_blank'>
+          <span className='text-white-400 hover:underline hover:text-white-100'>{contractAddress}</span>
+        </Link>
       </div>
       {Object.values(interactiveMethods).length === 0 && (
         <div className='text-white mt-4'>This contract has no methods to interact with.</div>
@@ -479,6 +483,22 @@ interface ErrorDisplayProps {
 function ErrorDisplay({ error }: ErrorDisplayProps) {
   return (
     <span className='text-xs'>Error: {error.message}</span>
+  );
+}
+
+interface TransactionHashDisplayProps {
+  hash: string;
+}
+
+function TransactionHashDisplay({ hash }: TransactionHashDisplayProps) {
+  return (
+    <div className='flex gap-1 text-sm'>
+      <span className="text-white-100">Transaction hash:</span>
+      <Link href={`/txs/${hash}`} target='_blank'>
+        <span className='text-white-400 hover:underline hover:text-white-100'>{hash}</span>
+      </Link>
+    </div>
+    
   );
 }
 

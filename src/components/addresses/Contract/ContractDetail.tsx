@@ -7,8 +7,7 @@ import ContractInteractionMethods from './ContractInteractionMethods';
 import { RSKFunctionFragment, rskFragmentsUtils } from '@/common/utils/contractInteractions';
 import { getStorageAt } from '@wagmi/core'
 import { wagmiConfig } from '@/context/Web3Provider';
-// import { isAddress } from 'ethers';
-// import { fetchContractVerification } from '@/services/addresses';
+import { fetchContractVerification } from '@/services/addresses';
 
 type TabType = 'general' | 'readProxy' | 'writeProxy' | 'readContract' | 'writeContract';
 
@@ -44,15 +43,14 @@ const tabs = [
 function ContractDetail() {
   const [tab, setTab] = useState<TabType>(tabTypes.general);
   const { address: addressData, contractVerification } = useAddressDataContext()
+  // TODO: add bridge interactions support
   const [isBridge, setIsBridge] = useState(false)
   const [isProxy, setIsProxy] = useState(false)
-  const [implementationAddress, setImplementationAddress] = useState<string | null>(null)
+  const [implementationAddress, setImplementationAddress] = useState<string>('')
   const [isImplementationVerified, setIsImplementationVerified] = useState(false)
   const [fetchCompleted, setFetchCompleted] = useState(false);
-
   const { abi } = contractVerification as { abi: RSKFunctionFragment[] }
-
-  const [targetAbi, setTargetAbi] = useState<RSKFunctionFragment[] | null>(abi)
+  const [targetAbi, setTargetAbi] = useState<RSKFunctionFragment[]>(abi)
 
   if (!addressData || !contractVerification) return
 
@@ -61,49 +59,52 @@ function ContractDetail() {
   }, [isProxy]);
 
   useEffect(() => {
-    const getAddressFromSlot = (slot: string) => slot.slice(0, -42)
+    const getAddressFromSlot = (slot: string) => `0x${slot.slice(-40)}`
 
     async function checkProxySlot() {
       try {
-        console.log(`Checking proxy slot for address: ${addressData?.address}`)
-        // ERC1967 Proxy implementation retrieval (https://eips.ethereum.org/EIPS/eip-1967)
-
+        // ERC1967 normative (see https://eips.ethereum.org/EIPS/eip-1967)
         const IMPLEMENTATION_SLOT = '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc'
+
+        // FUTURE: support beacon proxies
         // const BEACON_SLOT = '0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50'
 
+        // fetch implementation address from proxy slot
         const slotValue = await getStorageAt(wagmiConfig, {
           address: addressData?.address as unknown as `0x${string}`,
           slot: IMPLEMENTATION_SLOT
         }) as string
 
+        const isZero = BigInt(slotValue) === BigInt(0)
+
+        if (isZero) {
+          // No implementation address found in slot. Not a proxy contract
+          setIsProxy(false)
+          setImplementationAddress('')
+          setIsImplementationVerified(false)
+
+          return
+        }
+
+        // parse implementation address from slot value
         const implementationAddress = getAddressFromSlot(slotValue)
 
-        // Mock proxy trigger
         setIsProxy(true)
         setImplementationAddress(implementationAddress)
-        setIsImplementationVerified(false)
 
-        // BLOCKED until I can test it on a real deployed proxy
-        // if (isAddress(implementationAddress)) {
-        //   console.log(`Address ${addressData?.address} is a proxy. Implementation address: ${implementationAddress}`)
-        //   setIsProxy(true)
-        //   setImplementationAddress(implementationAddress)
+        // check if implementation address is verified
+        const implementationVerification = await fetchContractVerification(implementationAddress)
 
-        //   console.log("Fetching implementation verification...")
-        //   const implementationVerification = await fetchContractVerification(implementationAddress)
-        //   console.dir({ implementationVerification }, { depth: null })
+        if (!implementationVerification || !implementationVerification.data || !implementationVerification.data.abi) {
+          // No implementation ABI for implementation address. Interactions are not possible
+          setIsImplementationVerified(false)
 
-        //   if (!implementationVerification || !implementationVerification.data || !implementationVerification.data.abi) {
-        //     console.log(`Implementation verification not found for address: ${implementationAddress}`)
-        //     setIsImplementationVerified(false)
+          return
+        }
 
-        //     return
-        //   }
-
-        //   console.log(`Implementation is verified. Using implementation address ABI for interactions`)
-        //   setTargetAbi(implementationVerification.data.abi)
-        //   setIsImplementationVerified(true)
-        // }
+        // use implementation ABI for interactions with proxy AND implementation tabs
+        setTargetAbi(implementationVerification.data.abi)
+        setIsImplementationVerified(true)
       } catch (error) {
         console.error(`Error checking proxy slot for address: ${addressData?.address}`)
         console.error(error)
@@ -129,16 +130,16 @@ function ContractDetail() {
 
   const unverifiedImplementationData = {
     show: isProxy && !isImplementationVerified,
-    implementationAddress: implementationAddress as string
+    implementationAddress: implementationAddress
   }
 
-  if (isProxy && implementationAddress) {
-    // use implementation address for normal tabs
+  if (isProxy && implementationAddress !== '') {
+    // use implementation address for normal read/write tabs
     addresses.contractAddress = implementationAddress
   }
 
-  const readMethods = rskFragmentsUtils.getReadMethods(abi);
-  const writeMethods = rskFragmentsUtils.getWriteMethods(abi);
+  const readMethods = rskFragmentsUtils.getReadMethods(targetAbi);
+  const writeMethods = rskFragmentsUtils.getWriteMethods(targetAbi);
 
   return (
     <Card className='bg-secondary mt-6 w-full min-h-[500px]'>
