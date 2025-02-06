@@ -8,6 +8,7 @@ import { useAccount, useDisconnect } from 'wagmi';
 import { readContract, writeContract, simulateContract } from '@wagmi/core'
 import { wagmiConfig } from '@/context/Web3Provider';
 import { CHAIN_ID } from '@/common/constants';
+import Link from 'next/link';
 
 type MethodType = 'read' | 'write'
 
@@ -15,9 +16,34 @@ interface ContractInteractionMethodsProps {
   contractAddress: string
   methods: RSKFunctionFragment[]
   methodsType: MethodType
+  unverifiedImplementationData: {
+    show: boolean,
+    implementationAddress: string
+  }
 }
 
-function ContractInteractionMethods({ contractAddress, methods, methodsType }: ContractInteractionMethodsProps) {
+function ContractInteractionMethods({ contractAddress, methods, methodsType, unverifiedImplementationData }: ContractInteractionMethodsProps) {
+  if(unverifiedImplementationData.show) {
+    // hardcode implementation address until we can test a verified proxy with unverified implementation
+    // const implementationAddress = unverifiedImplementationData.implementationAddress;
+    const implementationAddress = contractAddress;
+    return (
+      <div className="w-full rounded-xl flex flex-col justify-center text-[#b9b9b9]">
+        <h2 className="text-xl font-bold mb-4">[ERC1967 Proxy Contract Detected]</h2>
+        <p className='text-sm'>This contract is a proxy and cannot be interacted with directly.</p>
+        <p className='text-sm'>
+          <span>Implementation address: </span>
+          <Link href={`/addresses/${implementationAddress}`}>
+            <span className='text-white'>{implementationAddress}</span>
+          </Link>
+        </p>
+        <p className='text-sm'>Please verify the implementation contract first to enable interactions.</p>
+        {/* TODO: verifications section in rootstock docs? */}
+        {/* <p className="text-sm mt-4">For more information, refer to the <a href="#" className="underline text-blue-300">documentation</a>.</p> */}
+      </div>
+    )
+  }
+
   const [interactiveMethods, setInteractiveMethods] = useState<InteractiveMethodsDict>(getInteractiveMethods(methods));
   const { address, isConnected } = useAccount()
   const [expandAll, setExpandAll] = useState(false);
