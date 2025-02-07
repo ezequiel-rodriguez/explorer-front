@@ -5,7 +5,7 @@ type props = {
   label?: string | React.ReactNode;
   icon?: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  type?: 'primary' | 'secondary' | 'icon' | 'outline' | 'small';
+  type?: 'primary' | 'secondary' | 'icon' | 'outline' | 'small' | 'brand';
   disabled?: boolean;
 };
 
@@ -25,6 +25,7 @@ function Button({
       'px-4 bg-btn-secondary hover:bg-gray-700 disabled:cursor-not-allowed disabled:hover:bg-btn-secondary text-gray-400 hover:text-gray-400',
     outline:
       'bg-primary hover:border-white text-white font-bold !rounded-3xl border w-[110px] after:w-[110px] after:h-10 after:rounded-3xl after:mt-2 after:ml-1 after:-z-10 after:absolute after:border',
+    brand: 'px-6 bg-brand-pink hover:bg-brand-pink-dark text-black',
   };
   return (
     <button

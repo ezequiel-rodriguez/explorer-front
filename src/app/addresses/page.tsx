@@ -6,6 +6,8 @@ import { fetchAddresses } from '@/services/addresses';
 
 export default async function Page(props: IPageProps) {
   const params = await props.searchParams;
+  console.log('params are: ', params);
+
   const response = await fetchAddresses(params);
   return (
     <div className="w-full">

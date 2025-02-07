@@ -19,6 +19,7 @@
     "bignumber.js": "^7.2.1",
     "chart.js": "^4.4.7",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
     "highlight.js": "^11.11.1",
     "highlightjs-solidity": "^2.0.6",
     "lightweight-charts": "^4.2.2",

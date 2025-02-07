@@ -16,6 +16,7 @@ export default {
         'brand-purple': 'var(--brand-purple)',
         'brand-green': 'var(--brand-green)',
         'brand-pink': 'var(--brand-pink)',
+        'brand-pink-dark': 'var(--brand-pink-dark)',
         'brand-orange': 'var(--brand-orange)',
         'brand-cyan': 'var(--brand-cyan)',
         'brand-yellow': 'var(--brand-yellow)',
