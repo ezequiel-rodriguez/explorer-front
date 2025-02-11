@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button';
 import { ADDRESSES_BTN_TABS } from '@/components/addresses/tabs/AddressesTabs';
 import { useTab } from '@/hooks/useTab';
 import AddressDetail from '@/components/addresses/tabs/AddressDetail';
-import ContractDetail from '@/components/addresses/Contract/ContractDetail';
+import VerifiedContractDetails from '@/components/addresses/Contract/VerifiedContractDetails';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchContractVerification } from '@/services/addresses';
 import { useAddressDataContext } from '@/context/AddressContext';
@@ -21,6 +21,7 @@ import {
 import { IEvents } from '@/common/interfaces/IEvents';
 import { fetchBalancesByAddress } from '@/services/balances';
 import { IBalances } from '@/common/interfaces/Balances';
+import { bridge } from '@/common/constants/bridge';
 
 type ITabType =
   | 'contract'
@@ -31,7 +32,8 @@ type ITabType =
   | 'balances';
 
 export default function Page() {
-  const { address, setContractVerification } = useAddressDataContext();
+  const { address, contractVerification, setContractVerification } =
+    useAddressDataContext();
   const [txsByAddress, setTxsByAddress] = useState<ITxs[] | undefined>();
   const [itxsByAddress, setITxsByAddress] = useState<
     IInternalTxs[] | undefined
@@ -49,7 +51,7 @@ export default function Page() {
     defaultTab: ADDRESSES_BTN_TABS[0].tab,
   });
   const [loading, setLoading] = useState(false);
-
+  const [isBridge, setIsBridge] = useState(false);
   const fetchData = useCallback(
     async (tab: ITabType, address: string) => {
       if (!address) return;
@@ -63,6 +65,10 @@ export default function Page() {
         if (tab === 'contract') {
           data = await fetchContractVerification(address);
           setContractVerification(data?.data);
+
+          if (address === bridge.address) {
+            setIsBridge(true);
+          }
         } else if (tab === 'txs') {
           data = await fetchTxsByAddress(address);
           setTxsByAddress(data?.data);
@@ -125,12 +131,13 @@ export default function Page() {
         />
       )}
       {loading && <TableLoader />}
-      {currentTab === 'contract' && !loading && address?.isVerified && (
-        <ContractDetail />
-      )}
-      {currentTab === 'contract' && !loading && !address?.isVerified && (
-        <ContractUnverified />
-      )}
+      {currentTab === 'contract' &&
+        !loading &&
+        (contractVerification || isBridge) && <VerifiedContractDetails />}
+      {currentTab === 'contract' &&
+        !loading &&
+        !contractVerification &&
+        !isBridge && <ContractUnverified />}
     </div>
   );
 }

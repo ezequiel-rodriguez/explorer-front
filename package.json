@@ -8,17 +8,23 @@
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "jest --verbose",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@canvasjs/charts": "^3.12.1",
     "@rsksmart/rns-resolver.js": "^1.1.0",
+    "@rsksmart/rsk-precompiled-abis": "^6.0.0-ARROWHEAD",
     "@rsksmart/rsk-utils": "^2.0.5",
+    "@tanstack/react-query": "^5.66.0",
     "@types/highlightjs": "^9.12.6",
     "axios": "^1.7.9",
     "bignumber.js": "^9.1.2",
     "chart.js": "^4.4.7",
+    "crypto": "^1.0.1",
     "date-fns": "^4.1.0",
+    "ethers": "^6.13.5",
     "highlight.js": "^11.11.1",
     "highlightjs-solidity": "^2.0.6",
     "lightweight-charts": "^4.2.2",
@@ -26,10 +32,17 @@
     "prismjs": "^1.29.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "use-debounce": "^10.0.4"
+    "use-debounce": "^10.0.4",
+    "uuid": "^11.0.5",
+    "viem": "^2.22.19",
+    "wagmi": "^2.14.9"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
     "@types/highlight.js": "^10.1.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20",
     "@types/prismjs": "^1.26.5",
     "@types/react": "^19.0.8",
@@ -40,6 +53,8 @@
     "eslint-config-next": "^15.1.7",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-import": "^2.31.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
@@ -47,6 +62,7 @@
     "postcss": "^8.5.2",
     "prettier": "^3.5.0",
     "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
 }
