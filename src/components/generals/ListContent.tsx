@@ -7,9 +7,9 @@ type props = {
 function ListContent({ children, className }: props) {
   return (
     <div
-      className={`text-white-400 bg-secondary rounded-lg p-4 mb-4 ${className}`}
+      className={`w-full text-white-400 bg-secondary rounded-lg p-4 mb-4 ${className}`}
     >
-      {children}
+      <div className="w-full">{children}</div>
     </div>
   );
 }

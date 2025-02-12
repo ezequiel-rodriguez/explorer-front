@@ -1,10 +1,10 @@
 import { IInternalTxs } from '@/common/interfaces/Txs';
-import { parseDate } from '@/common/utils/Time';
 import ToolTip from '@/components/ui/ToolTip';
 import React from 'react';
 import { Table, TableCell, TableHeader, TableRow } from '../ui/Table';
 import Status from '../ui/Status';
 import Badge from '../ui/Badge';
+import { parseDecimals } from '@/common/utils/ParseDecimals';
 
 type props = {
   itxs: IInternalTxs[] | undefined;
@@ -19,7 +19,8 @@ function InternalTxsTable({ itxs }: props) {
         <TableCell>Status</TableCell>
         <TableCell>From</TableCell>
         <TableCell>To</TableCell>
-        <TableCell>Value</TableCell>
+        <TableCell>Amount</TableCell>
+        <TableCell>Fee</TableCell>
       </TableHeader>
       {itxs?.map((itx, i) => (
         <TableRow key={i}>
@@ -42,7 +43,8 @@ function InternalTxsTable({ itxs }: props) {
           <TableCell>
             <ToolTip text={itx.action?.to} type="address" />
           </TableCell>
-          <TableCell>{parseDate(itx.timestamp).timeAgo}</TableCell>
+          <TableCell>{parseDecimals(itx.action.value, 4)}</TableCell>
+          <TableCell>{itx.action.gas}</TableCell>
         </TableRow>
       ))}
     </Table>

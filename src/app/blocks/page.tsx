@@ -1,7 +1,7 @@
 import BlocksTable from '../../components/blocks/BlocksTable';
 import PaginationCursor from '@/components/ui/PaginationCursor';
 import { IPageProps } from '@/common/interfaces/RouterParams';
-import { BlockIcon, TxIcon } from '@/common/icons';
+import { BlockIcon } from '@/common/icons';
 import { fetchBlocks } from '@/services/blocks';
 
 export default async function page(props: IPageProps) {
@@ -26,7 +26,6 @@ export default async function page(props: IPageProps) {
           }
         />
       </div>
-
       <BlocksTable blocks={response?.data} />
     </div>
   );

@@ -26,16 +26,25 @@ function BlockDetail() {
           }
         />
         <ListItem title="Timestamp:" value={<Date date={block?.timestamp} />} />
-        <ListItem title="Size:" value={block?.size} />
+        <ListItem title="Size:" value={`${parseDecimals(block?.size)} bytes`} />
         <ListItem
           title="Transactions:"
-          value={`${block?.transactions} in this block`}
+          value={
+            <>
+              <span className="text-brand-green">
+                {block?.transactions}{' '}
+                {block?.transactions || 0 > 1
+                  ? 'transactions '
+                  : 'transaction '}
+              </span>
+              <span>in this block</span>
+            </>
+          }
         />
-        <ListItem title="Hash:" type="tooltip" value={block?.miner} trim={0} />
+        <ListItem title="Miner:" type="tooltip" value={block?.miner} trim={0} />
 
         <hr className="border-gray-700 border-[1px] my-2" />
 
-        <ListItem title="Hash:" type="tooltip" value={block?.hash} trim={0} />
         <ListItem
           title="Difficulty:"
           value={`${parseDecimals(block?.difficultyInGH)} GH`}

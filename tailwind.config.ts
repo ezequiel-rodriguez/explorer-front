@@ -21,6 +21,8 @@ export default {
         'brand-yellow': 'var(--brand-yellow)',
         'brand-lime': 'var(--brand-lime)',
         'brand-red': 'var(--brand-red)',
+        highlighted: 'var(--highlighted)',
+        'dark-brown': 'var(--dark-brown)',
 
         'white-100': 'var(--white-100)',
         'white-400': 'var(--white-400)',

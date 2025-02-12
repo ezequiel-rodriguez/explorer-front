@@ -1,16 +1,21 @@
-import React from 'react';
+'use client';
+import React, { ReactNode } from 'react';
 
 type TableProps = {
   children: React.ReactNode;
 };
 
-type TableCellProps = {
-  children?: React.ReactNode;
+interface TableCellProps extends React.HTMLAttributes<HTMLDivElement> {
+  children?: ReactNode;
   className?: string;
-};
+}
 
 export const Table = ({ children }: TableProps) => {
-  return <div className="w-full mt-6">{children}</div>;
+  return (
+    <div className="w-full overflow-x-scroll md:overflow-visible mt-6">
+      <div className="w-[900px] md:w-full">{children}</div>
+    </div>
+  );
 };
 
 export const TableHeader = ({ children }: TableProps) => {
@@ -32,6 +37,14 @@ export const TableRow = ({ children }: TableProps) => {
 export const TableCell = ({
   children,
   className = 'flex-1 text-center flex justify-center',
+  ...props
 }: TableCellProps) => {
-  return <div className={`flex-1 text-center ${className}`}>{children}</div>;
+  return (
+    <div
+      className={`flex-1 text-center flex justify-center ${className}`}
+      {...props}
+    >
+      {children}
+    </div>
+  );
 };

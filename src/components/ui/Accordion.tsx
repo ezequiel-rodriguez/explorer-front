@@ -26,7 +26,7 @@ const Accordion = ({
     <div className="w-full">
       <button
         onClick={toggleAccordion}
-        className={`${styles ? 'justify-start bg-secondary transition p-4 rounded-xl outline-none' : ''} ${className} w-full text-left flex items-center gap-2`}
+        className={`cursor-pointer ${styles ? 'justify-start bg-secondary transition p-4 rounded-xl outline-none' : ''} ${className} w-full text-left flex items-center gap-2`}
       >
         {isOpen ? (
           <span className="transition-transform transform rotate-180">-</span>
@@ -36,11 +36,11 @@ const Accordion = ({
         <span className="font-medium">{isOpen ? subtitle : title}</span>
       </button>
       <div
-        className={`accordion-content overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-[500px] py-4' : 'max-h-0'
+        className={`accordion-content transition-all duration-300 ease-in-out ${
+          isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 overflow-hidden'
         }`}
       >
-        <div className={`${styles ? 'px-5' : ''}`}>{children}</div>
+        <div className={`${styles ? 'px-5' : ''} mt-4`}>{children}</div>
       </div>
     </div>
   );

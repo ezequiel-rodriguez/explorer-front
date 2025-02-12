@@ -21,9 +21,9 @@ function ListItem({
   if (!value) return;
   return (
     <div
-      className={`flex items-center w-full ${type === 'simple' ? 'py-1' : 'py-3'}`}
+      className={`sm:flex items-center w-full ${type === 'simple' ? 'py-1' : 'py-3'}`}
     >
-      <div className="w-3/12 flex items-center gap-2">
+      <div className="w-full sm:w-3/12 flex items-center gap-2">
         {type !== 'simple' && (
           <div>
             <InfoIcon />
@@ -31,9 +31,15 @@ function ListItem({
         )}
         {title}
       </div>
-      <div className={`w-9/12 text-white-100 break-words ${className}`}>
+      <div
+        className={`w-full sm:w-9/12 text-white-100 break-words ${className}`}
+      >
         {type === 'tooltip' ? (
-          <ToolTip text={(value as string) || text} trim={trim} />
+          <ToolTip
+            className="!px-0"
+            text={(value as string) || text}
+            trim={trim}
+          />
         ) : (
           value
         )}

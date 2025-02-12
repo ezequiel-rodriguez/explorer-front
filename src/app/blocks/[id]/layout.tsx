@@ -21,10 +21,10 @@ export default async function layout({ children, params }: props) {
     <Card pd="p0" className="mb-14 mt-6">
       <Link
         href={ROUTER.BLOCKS.INDEX}
-        className={`flex items-center gap-2 cursor-pointer mb-6 text-sm text-brand-orange`}
+        className={`flex items-center gap-1 cursor-pointer mb-6 text-sm text-brand-green`}
       >
-        <ReturIcon className="fill-brand-orange" />
-        All Blocks
+        <ReturIcon className="stroke-brand-green" />
+        All Blockss
       </Link>
       <h1 className="flex gap-3 items-center text-3xl font-medium">
         <BlockIcon className="w-6 h-6" /> Block{' '}
