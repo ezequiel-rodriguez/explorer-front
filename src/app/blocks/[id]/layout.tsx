@@ -1,5 +1,5 @@
 import { ROUTER } from '@/common/constants';
-import { BlockIcon, ReturIcon } from '@/common/icons';
+import { ReturIcon } from '@/common/icons';
 import Card from '@/components/ui/Card';
 import ToolTip from '@/components/ui/ToolTip';
 import { BlocksDataProvider } from '@/context/BlocksContext';

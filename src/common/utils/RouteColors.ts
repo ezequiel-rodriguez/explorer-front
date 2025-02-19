@@ -2,38 +2,38 @@ import { ROUTER } from '@/common/constants';
 
 const routeStyles = {
   [ROUTER.HOME]: {
-    background: 'bg-brand-orange',
-    text: 'text-brand-orange',
+    color: 'brand-orange',
   },
   [ROUTER.BLOCKS.INDEX]: {
-    background: 'bg-brand-green',
-    text: 'text-brand-green',
+    color: 'brand-green',
   },
   [ROUTER.TXS.INDEX]: {
-    background: 'bg-brand-purple',
-    text: 'text-brand-purple',
+    color: 'brand-purple',
   },
   [ROUTER.ITXS.INDEX]: {
-    background: 'bg-brand-purple',
-    text: 'text-brand-purple',
+    color: 'brand-purple',
   },
   [ROUTER.ADDRESSES.INDEX]: {
-    background: 'bg-brand-pink',
-    text: 'text-brand-pink',
+    color: 'brand-pink',
   },
   [ROUTER.TOKENS.INDEX]: {
-    background: 'bg-brand-cyan',
-    text: 'text-brand-cyan',
+    color: 'brand-cyan',
+  },
+  [ROUTER.EVENTS.INDEX]: {
+    color: 'brand-purple',
   },
 };
 
-// Valores predeterminados
-const defaultStyles = {
-  background: 'bg-gray-200',
-  text: 'text-gray-500',
-};
+const defaultColor = 'white-100';
 
-export function getRouteStyles(pathname: string) {
+/**
+ * Returns a list of Tailwind classes based on the current route.
+ *
+ * @param {string} pathname - The current browser path.
+ * @param {string[]} types - List of Tailwind class prefixes to apply (e.g., ['text', 'bg', 'border']).
+ * @returns {string} - Generated classes, e.g., "text-brand-orange bg-brand-orange border-brand-orange".
+ */
+export function getRouteStyles(pathname: string, types: string[]) {
   const orderedRoutes = Object.keys(routeStyles).sort(
     (a, b) => b.length - a.length,
   );
@@ -41,5 +41,7 @@ export function getRouteStyles(pathname: string) {
     pathname.startsWith(route),
   );
 
-  return matchedRoute ? routeStyles[matchedRoute] : defaultStyles;
+  const color = matchedRoute ? routeStyles[matchedRoute].color : defaultColor;
+
+  return types.map((type) => `${type}-${color}`).join(' ');
 }

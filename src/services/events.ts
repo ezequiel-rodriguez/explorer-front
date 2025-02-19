@@ -3,7 +3,9 @@ import { fetchData } from './api';
 import { ROUTER } from '@/common/constants';
 
 export async function fetchTransferEventByTxhash(hash: string) {
-  const response = await fetchData<IEvents[]>(`${ROUTER.EVENTS.TX}/${hash}`);
+  const response = await fetchData<IEvents[]>(
+    `${ROUTER.EVENTS.TOKEN_TRANSFER}/${hash}`,
+  );
   return response;
 }
 
@@ -16,7 +18,7 @@ export async function fetchEventsByAddress(address: string) {
 
 export async function fetchTransferEventsByAddress(address: string) {
   const response = await fetchData<IEvents[]>(
-    `${ROUTER.EVENTS.TOKEN_TRANSFER_ADRESS}/${address}`,
+    `${ROUTER.EVENTS.TOKEN_TRANSFER}/${address}`,
   );
   return response;
 }

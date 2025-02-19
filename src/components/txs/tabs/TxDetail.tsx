@@ -6,6 +6,9 @@ import Date from '@/components/ui/Date';
 import Status from '@/components/ui/Status';
 import Badge from '@/components/ui/Badge';
 import Code from '@/components/ui/Code';
+import Block from '@/components/blocks/Block';
+import { txFee } from '@/common/utils/ParseTx';
+import ToolTip from '@/components/ui/ToolTip';
 
 function TxDetail() {
   const { tx } = useTxsDataContext();
@@ -13,23 +16,23 @@ function TxDetail() {
   return (
     <ListContent>
       <ListItem
-        title="Hash"
-        type="tooltip"
-        value={tx?.hash}
-        className="text-brand-purple"
+        title="Transaction Hash:"
+        value={
+          <ToolTip text={tx?.hash} className="!text-white-100 px-0" trim={0} />
+        }
       />
-      <ListItem title="Timestamp" value={<Date date={tx?.timestamp} />} />
-      <ListItem title="Status" value={<Status type={tx!.status!} />} />
+      <ListItem title="Timestamp:" value={<Date date={tx?.timestamp} />} />
+      <ListItem title="Status:" value={<Status type={tx!.status!} />} />
       <ListItem
-        title="Block"
-        value={parseDecimals(tx?.blockNumber)}
-        className="text-brand-purple"
+        title="Block:"
+        value={<Block number={tx?.blockNumber} />}
+        className="!text-brand-purple"
       />
       <ListItem
-        title="Type"
+        title="Type:"
         value={tx?.txType ? <Badge text={tx!.txType!} type="info" /> : ''}
       />
-      <ListItem title="Nonce" value={tx?.nonce} />
+      <ListItem title="Nonce:" value={tx?.nonce} />
       <hr className="border-gray-700 border-[1px] my-2" />
       <ListItem
         title="From:"
@@ -45,11 +48,14 @@ function TxDetail() {
       />
       <hr className="border-gray-700 border-[1px] my-2" />
 
-      <ListItem title="Value" value={`${tx?.value} RBTC`} />
-      <ListItem title="Gas" value={parseDecimals(tx?.gas)} />
-      <ListItem title="Gas Price" value={tx?.gasPrice} />
-      <ListItem title="Gas Used" value={parseDecimals(tx?.gasUsed)} />
-      <ListItem title="Input" value={<Code code={tx?.input} />} />
+      <ListItem title="Value:" value={`${tx?.value} RBTC`} />
+      <ListItem
+        title="Transactions Fee:"
+        value={`${txFee(tx?.gasPrice, tx?.gasUsed)} RBTC`}
+      />
+      <ListItem title="Gas Price:" value={tx?.gasPrice} />
+      <ListItem title="Gas Used:" value={parseDecimals(tx?.gasUsed)} />
+      <ListItem title="Input:" value={<Code code={tx?.input} />} />
     </ListContent>
   );
 }

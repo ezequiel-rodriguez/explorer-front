@@ -10,7 +10,7 @@ export async function fetchTxs(params: object) {
 }
 
 export async function fetchTxsByHash(hash: string) {
-  const response = await fetchData<ITxs>(`${ROUTER.TXS.INDEX}/${hash}`);
+  const response = await fetchData<ITxs>(`${ROUTER.TXS.INDEX}/${hash}`, {}, 0);
   return response;
 }
 

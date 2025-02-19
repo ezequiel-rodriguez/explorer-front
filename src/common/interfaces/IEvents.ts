@@ -1,3 +1,5 @@
+import { ITxs } from './Txs';
+
 export interface IEvents {
   eventId: string;
   abi: EventAbi;
@@ -23,6 +25,8 @@ export interface IEvents {
     name: string;
     symbol: string;
   };
+  contract_interface: string[];
+  transaction: ITxs;
 }
 
 interface EventAbiInput {

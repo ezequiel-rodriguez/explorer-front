@@ -2,6 +2,7 @@ import BlocksTable from '../../components/blocks/BlocksTable';
 import PaginationCursor from '@/components/ui/PaginationCursor';
 import { IPageProps } from '@/common/interfaces/RouterParams';
 import { fetchBlocks } from '@/services/blocks';
+import PageTitle from '@/components/ui/PageTitle';
 
 export default async function page(props: IPageProps) {
   const params = await props.searchParams;
@@ -9,10 +10,7 @@ export default async function page(props: IPageProps) {
 
   return (
     <div className="w-full">
-      <h1 className="font-bold text-3xl flex gap-3 items-center mt-10">
-        Blocks
-      </h1>
-
+      <PageTitle title="Blocks" />
       <div className="mt-8">
         <PaginationCursor
           data={

@@ -4,7 +4,7 @@ export const TXS_BTN_TABS = [
   { label: 'Overview', tab: 'overview' },
   { label: 'Internal Transantions', tab: 'itxs' },
   { label: 'Logs', tab: 'logs' },
-  { label: 'Token transfer', tab: 'ttransfer' },
+  { label: 'Token Transfer', tab: 'ttransfer' },
 ];
 
 export const TXS_URL_TABS = [

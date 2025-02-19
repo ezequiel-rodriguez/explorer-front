@@ -1,5 +1,5 @@
 import { ROUTER } from '@/common/constants';
-import { ReturIcon, TxIcon } from '@/common/icons';
+import { ReturIcon } from '@/common/icons';
 import { IInternalTxs } from '@/common/interfaces/Txs';
 import { parseDecimals } from '@/common/utils/ParseDecimals';
 import Code from '@/components/ui/Code';
@@ -13,6 +13,7 @@ import Status from '@/components/ui/Status';
 import ToolTip from '@/components/ui/ToolTip';
 import Link from 'next/link';
 import { fetchData } from '@/services/api';
+import PageTitle from '@/components/ui/PageTitle';
 
 type props = {
   params: Promise<{
@@ -30,18 +31,20 @@ export default async function page({ params }: props) {
     <Card pd="p0" className="mt-6">
       <Link
         href={ROUTER.TXS.INDEX}
-        className={`flex items-center gap-2 cursor-pointer mb-6 text-sm text-brand-orange`}
+        className={`flex items-center gap-2 cursor-pointer mb-6 text-sm text-brand-purple`}
       >
-        <ReturIcon className="fill-brand-orange" />
+        <ReturIcon className="stroke-brand-purple" />
         All Transactions
       </Link>
-      <h1 className="flex gap-3 items-center text-3xl font-medium">
-        <TxIcon className="w-6 h-6" /> Internal Transaction
-      </h1>
-      <div className="text-white-400 mt-6">
-        Internal Transaction ID{' '}
+      <PageTitle title="Internal Transaction" />
+      <div className="text-white-400 mt-6 text-lg">
+        Internal Transaction Id
         <span className="text-brand-purple">
-          <ToolTip text={itx?.internalTxId} trim={0} />
+          <ToolTip
+            text={itx?.internalTxId}
+            trim={0}
+            className="!text-white-100"
+          />
         </span>
       </div>
 
@@ -86,7 +89,10 @@ export default async function page({ params }: props) {
           value={<Badge text={itx!.type!} type="info" />}
         />
         <ListItem title="Input" value={<Code code={itx?.action.input} />} />
-        <ListItem title="Value" value={`${itx?.action.value} RBTC`} />
+        <ListItem
+          title="Value"
+          value={`${parseDecimals(itx?.action.value, 6)} RBTC`}
+        />
         <ListItem
           title="Status"
           value={<Status type={!itx?.error ? 'SUCCESS' : 'FAIL'} />}

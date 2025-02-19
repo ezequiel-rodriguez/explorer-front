@@ -65,7 +65,9 @@ export default function Page() {
         {currentTab === 'itxs' && !loading && (
           <InternalTxsTable itxs={itxsData} />
         )}
-        {currentTab === 'logs' && !loading && <LogsContainer />}
+        {currentTab === 'logs' && !loading && (
+          <LogsContainer logs={tx?.receipt.logs} />
+        )}
         {currentTab === 'ttransfer' && !loading && (
           <>
             {tokensData?.length ? (

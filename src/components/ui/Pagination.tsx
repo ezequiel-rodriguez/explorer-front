@@ -3,16 +3,14 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@/common/icons';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import React from 'react';
 import Button from './Button';
-import { parseDecimals } from '@/common/utils/ParseDecimals';
 type props = {
   data: {
     totalPages: number;
     currentPage: number;
     total: number;
   };
-  text: string;
 };
-function Pagination({ data, text }: props) {
+function Pagination({ data }: props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -28,9 +26,7 @@ function Pagination({ data, text }: props) {
   if (data.total <= 50) return;
   return (
     <div className="flex justify-between items-center mt-6">
-      <div className="font-semibold">
-        {text} {parseDecimals(data.total)}
-      </div>
+      <div className="font-semibold"></div>
       <div className="flex items-center gap-3">
         <div className="flex gap-3 items-center">
           <Button

@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button';
 import { ADDRESSES_BTN_TABS } from '@/components/addresses/tabs/AddressesTabs';
 import { useTab } from '@/hooks/useTab';
 import AddressDetail from '@/components/addresses/tabs/AddressDetail';
-import VerifiedContractDetails from '@/components/addresses/Contract/VerifiedContractDetails';
+import ContractDetail from '@/components/addresses/Contract/ContractDetail';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchContractVerification } from '@/services/addresses';
 import { useAddressDataContext } from '@/context/AddressContext';
@@ -21,25 +21,34 @@ import {
 import { IEvents } from '@/common/interfaces/IEvents';
 import { fetchBalancesByAddress } from '@/services/balances';
 import { IBalances } from '@/common/interfaces/Balances';
-import { bridge } from '@/common/constants/bridge';
+import { fetchTokensByAddress } from '@/services/tokens';
+import { fetchAccountsByAddress } from '@/services/accounts';
+import { ITokensByAddress } from '@/common/interfaces/Tokens';
 
 type ITabType =
   | 'contract'
   | 'txs'
   | 'itxs'
+  | 'tokens'
   | 'events'
+  | 'accounts'
   | 'token_transfer'
   | 'balances';
 
 export default function Page() {
-  const { address, contractVerification, setContractVerification } =
-    useAddressDataContext();
+  const { address, setContractVerification } = useAddressDataContext();
   const [txsByAddress, setTxsByAddress] = useState<ITxs[] | undefined>();
   const [itxsByAddress, setITxsByAddress] = useState<
     IInternalTxs[] | undefined
   >();
+  const [tokensByAddress, setTokensByAddress] = useState<
+    ITokensByAddress[] | undefined
+  >();
   const [eventsByAddress, setEventsByAddress] = useState<
     IEvents[] | undefined
+  >();
+  const [accountsByAddress, setAccountsByAddress] = useState<
+    ITokensByAddress[] | undefined
   >();
   const [transferByAddress, setTransferByAddress] = useState<
     IEvents[] | undefined
@@ -51,7 +60,7 @@ export default function Page() {
     defaultTab: ADDRESSES_BTN_TABS[0].tab,
   });
   const [loading, setLoading] = useState(false);
-  const [isBridge, setIsBridge] = useState(false);
+
   const fetchData = useCallback(
     async (tab: ITabType, address: string) => {
       if (!address) return;
@@ -65,19 +74,21 @@ export default function Page() {
         if (tab === 'contract') {
           data = await fetchContractVerification(address);
           setContractVerification(data?.data);
-
-          if (address === bridge.address) {
-            setIsBridge(true);
-          }
         } else if (tab === 'txs') {
           data = await fetchTxsByAddress(address);
           setTxsByAddress(data?.data);
         } else if (tab === 'itxs') {
           data = await fetchInternalTxsByAddress(address);
           setITxsByAddress(data?.data);
+        } else if (tab === 'tokens') {
+          data = await fetchTokensByAddress(address);
+          setTokensByAddress(data?.data);
         } else if (tab === 'events') {
           data = await fetchEventsByAddress(address);
           setEventsByAddress(data?.data);
+        } else if (tab === 'accounts') {
+          data = await fetchAccountsByAddress(address);
+          setAccountsByAddress(data?.data);
         } else if (tab === 'token_transfer') {
           data = await fetchTransferEventsByAddress(address);
           setTransferByAddress(data?.data);
@@ -125,19 +136,20 @@ export default function Page() {
           currentTab={currentTab}
           itxs={itxsByAddress}
           txs={txsByAddress}
+          tokensByAddress={tokensByAddress}
           events={eventsByAddress}
+          accountsByAddress={accountsByAddress}
           tokens={transferByAddress}
           balances={balancesByAddress}
         />
       )}
       {loading && <TableLoader />}
-      {currentTab === 'contract' &&
-        !loading &&
-        (contractVerification || isBridge) && <VerifiedContractDetails />}
-      {currentTab === 'contract' &&
-        !loading &&
-        !contractVerification &&
-        !isBridge && <ContractUnverified />}
+      {currentTab === 'contract' && !loading && address?.isVerified && (
+        <ContractDetail />
+      )}
+      {currentTab === 'contract' && !loading && !address?.isVerified && (
+        <ContractUnverified />
+      )}
     </div>
   );
 }

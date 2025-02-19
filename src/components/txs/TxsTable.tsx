@@ -52,7 +52,7 @@ function TxsTable({ txs, showBlock = true }: props) {
               <Status type={tx.status} />
             </TableCell>
             {showBlock && (
-              <TableCell>
+              <TableCell className="text-brand-purple">
                 <Block number={tx.blockNumber} />
               </TableCell>
             )}

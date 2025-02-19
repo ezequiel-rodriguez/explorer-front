@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 
-type RouteType = 'block' | 'address' | 'hash' | 'itx' | 'empty';
+type RouteType = 'block' | 'address' | 'hash' | 'itx' | 'event' | 'empty';
 
 type Props = {
   text: string | undefined;
@@ -60,6 +60,7 @@ const ToolTip: React.FC<Props> = ({
       address: `${ROUTER.ADDRESSES.INDEX}/${text}`,
       hash: `${ROUTER.TXS.INDEX}/${text}`,
       itx: `${ROUTER.ITXS.INDEX}/${text}`,
+      event: `${ROUTER.EVENTS.INDEX}/${text}`,
       empty: undefined,
     };
     return ROUTE_MAP[type] ? (
@@ -75,7 +76,7 @@ const ToolTip: React.FC<Props> = ({
     );
   };
 
-  const { text: textColor } = getRouteStyles(pathname);
+  const textColor = getRouteStyles(pathname, ['text']);
 
   return (
     <div

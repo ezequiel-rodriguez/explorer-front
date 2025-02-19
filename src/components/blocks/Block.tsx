@@ -4,7 +4,7 @@ import Link from 'next/link';
 import React from 'react';
 
 type props = {
-  number: string | number;
+  number: string | number | undefined;
 };
 function Block({ number }: props) {
   return (
