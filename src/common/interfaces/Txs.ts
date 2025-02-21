@@ -31,6 +31,7 @@ export interface IInternalTxs {
   traceAddress: string;
   result?: {
     gasUsed: string;
+    code: string;
     output: string;
   };
   index: number;
@@ -43,6 +44,7 @@ export interface IInternalTxs {
     to: string;
     gas: string;
     input: string;
+    init: string;
     value: string;
   };
 }

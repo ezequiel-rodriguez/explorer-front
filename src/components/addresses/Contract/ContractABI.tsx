@@ -5,7 +5,7 @@ function ContractABI({ abi }: { abi: string | undefined }) {
   return (
     <div className="mt-4">
       <div className="mb-5 font-medium">Contract ABI</div>
-      <Code height="h-52" code={abi} />
+      <Code code={abi} />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import Code from '@/components/ui/Code';
 import Block from '@/components/blocks/Block';
 import { txFee } from '@/common/utils/ParseTx';
 import ToolTip from '@/components/ui/ToolTip';
+import { weiToEther } from '@/common/utils/ParseToNumber';
 
 function TxDetail() {
   const { tx } = useTxsDataContext();
@@ -18,7 +19,7 @@ function TxDetail() {
       <ListItem
         title="Transaction Hash:"
         value={
-          <ToolTip text={tx?.hash} className="!text-white-100 px-0" trim={0} />
+          <ToolTip text={tx?.hash} className="!text-white-100 !px-0" trim={0} />
         }
       />
       <ListItem title="Timestamp:" value={<Date date={tx?.timestamp} />} />
@@ -53,7 +54,12 @@ function TxDetail() {
         title="Transactions Fee:"
         value={`${txFee(tx?.gasPrice, tx?.gasUsed)} RBTC`}
       />
-      <ListItem title="Gas Price:" value={tx?.gasPrice} />
+      <ListItem title="Gas Price:" value={
+        <span className='flex gap-2'>
+          <span>{tx?.gasPrice} RBTC</span>
+          <span className='text-white-400'>({weiToEther(tx!.gasPrice)} Gwei)</span>
+        </span>
+      } />
       <ListItem title="Gas Used:" value={parseDecimals(tx?.gasUsed)} />
       <ListItem title="Input:" value={<Code code={tx?.input} />} />
     </ListContent>

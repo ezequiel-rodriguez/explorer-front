@@ -20,7 +20,7 @@ function TokenTransfersTable({ tokens }: props) {
     <Table>
       <TableHeader>
         <TableCell className="w-10 flex-none"></TableCell>
-        <TableCell>Name</TableCell>
+        <TableCell>Token</TableCell>
         <TableCell>Token Type</TableCell>
         <TableCell>From</TableCell>
         <TableCell>To</TableCell>

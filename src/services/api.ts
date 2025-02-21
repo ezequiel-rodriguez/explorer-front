@@ -6,7 +6,7 @@ import { DataResponse } from '@/common/interfaces/IResponse';
 export async function fetchData<T>(
   url: string,
   params?: object,
-  revalidate: number = 60,
+  revalidate: number = 10,
 ): Promise<DataResponse<T>> {
   try {
     const queryString = params

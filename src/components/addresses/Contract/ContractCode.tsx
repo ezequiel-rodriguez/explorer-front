@@ -41,7 +41,7 @@ function ContractCode() {
         <span className="text-white-400">(Solidity)</span>
       </div>
       <div className="my-4 text-white-100">{`${contract?.request.name}.sol`}</div>
-      <Code height="h-52" code={sourceCode?.content} />
+      <Code code={sourceCode?.content} />
       {sourceCode?.content !== fileSelected?.content && (
         <>
           <div className="flex items-center gap-1 mt-5 font-medium">
@@ -52,7 +52,7 @@ function ContractCode() {
               <button
                 key={i}
                 onClick={() => handleSelectFile(x)}
-                className={`${fileSelected?.file === x.file ? 'text-brand-pink' : ''}`}
+                className={`${fileSelected?.file === x.file ? 'text-brand-pink' : ''} cursor-pointer`}
               >
                 {x.file}
               </button>

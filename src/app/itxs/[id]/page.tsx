@@ -14,6 +14,7 @@ import ToolTip from '@/components/ui/ToolTip';
 import Link from 'next/link';
 import { fetchData } from '@/services/api';
 import PageTitle from '@/components/ui/PageTitle';
+import Block from '@/components/blocks/Block';
 
 type props = {
   params: Promise<{
@@ -27,6 +28,7 @@ export default async function page({ params }: props) {
     `${ROUTER.ITXS.INDEX}/${txParam}`,
   );
   const itx = response?.data;
+  console.log('itx: ', itx)
   return (
     <Card pd="p0" className="mt-6">
       <Link
@@ -52,32 +54,32 @@ export default async function page({ params }: props) {
 
       <ListContent className="mt-6">
         <ListItem
-          title="Transaction"
+          title="Transaction:"
           value={itx?.transactionHash}
           type="tooltip"
           className="text-brand-purple"
         />
         <ListItem
-          title="Block Hash"
+          title="Block Hash:"
           value={itx?.blockHash}
           type="tooltip"
           className="text-brand-purple"
         />
-        <ListItem title="Timestamp" value={<Date date={itx?.timestamp} />} />
+        <ListItem title="Timestamp:" value={<Date date={itx?.timestamp} />} />
         <ListItem
-          title="Block Number"
-          value={parseDecimals(itx?.blockNumber)}
+          title="Block Number:"
+          value={<Block number={itx?.blockNumber} />}
         />
 
         <hr className="border-gray-700 border-[1px] my-2" />
         <ListItem
-          title="From"
+          title="From:"
           value={itx?.action.from}
           type="tooltip"
           className="text-brand-purple"
         />
         <ListItem
-          title="To"
+          title="To:"
           value={itx?.action.to}
           type="tooltip"
           className="text-brand-purple"
@@ -85,25 +87,35 @@ export default async function page({ params }: props) {
         <hr className="border-gray-700 border-[1px] my-2" />
 
         <ListItem
-          title="Type"
+          title="Type:"
           value={<Badge text={itx!.type!} type="info" />}
         />
-        <ListItem title="Input" value={<Code code={itx?.action.input} />} />
+        <ListItem title="Input" value={<Code code={itx?.action.input || ' '} />} />
         <ListItem
-          title="Value"
+          title="Value:"
           value={`${parseDecimals(itx?.action.value, 6)} RBTC`}
         />
         <ListItem
-          title="Status"
+          title="Status:"
           value={<Status type={!itx?.error ? 'SUCCESS' : 'FAIL'} />}
         />
         <ListItem title="Gas" value={parseDecimals(itx?.action.gas)} />
         <ListItem
-          title="Gas Used"
+          title="Gas Used:"
           value={parseDecimals(itx?.result?.gasUsed)}
         />
-        <ListItem title="Output" value={<Code code={itx?.result?.output} />} />
-        <ListItem title="Error" value={itx?.error} />
+        {
+          itx?.action.init && (
+            <ListItem title="Init:" value={<Code code={itx?.action.init} />} />
+          )
+        }
+        {
+          itx?.result?.code && (
+            <ListItem title="Code:" value={<Code code={itx?.result?.code} />} />
+          )
+        }
+        <ListItem title="Output:" value={<Code code={itx?.result?.output || ' '} />} />
+        <ListItem title="Error:" value={itx?.error} />
       </ListContent>
     </Card>
   );

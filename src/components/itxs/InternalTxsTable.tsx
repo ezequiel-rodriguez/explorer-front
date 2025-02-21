@@ -19,6 +19,7 @@ type props = {
 };
 
 function InternalTxsTable({ itxs, showBlock = true }: props) {
+  console.log('itxs: ', itxs)
   const pathname = usePathname();
   const color = getRouteStyles(pathname, ['stroke', 'text']);
   return (
@@ -43,7 +44,7 @@ function InternalTxsTable({ itxs, showBlock = true }: props) {
           <TableCell>
             <Badge
               className="capitalize"
-              text={itx.action?.callType}
+              text={itx.action?.callType || itx.type}
               type="info"
             />
           </TableCell>

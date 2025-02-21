@@ -13,5 +13,5 @@ export const txFee = (
 
   if (!value) return 0;
 
-  return parseDecimals(value, 8);
+  return parseDecimals(value, 15);
 };
