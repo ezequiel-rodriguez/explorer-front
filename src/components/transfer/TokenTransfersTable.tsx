@@ -15,11 +15,11 @@ type props = {
 
 function TokenTransfersTable({ tokens }: props) {
   const pathname = usePathname();
-  const iconColor = getRouteStyles(pathname, ['stroke']);
+  const color = getRouteStyles(pathname, ['stroke', 'text']);
   return (
     <Table>
       <TableHeader>
-        <TableCell className="w-10 flex-none"></TableCell>
+        <TableCell type="icon" />
         <TableCell>Token</TableCell>
         <TableCell>Token Type</TableCell>
         <TableCell>From</TableCell>
@@ -28,12 +28,16 @@ function TokenTransfersTable({ tokens }: props) {
       </TableHeader>
       {tokens?.map((tk, i) => (
         <TableRow key={i}>
-          <TableCell className="w-10 flex-none">
+          <TableCell type="icon">
             <Link href={`${ROUTER.EVENTS.INDEX}/${tk.eventId}`}>
-              <InternalLinkIcon className={iconColor} />
+              <InternalLinkIcon className={color} />
             </Link>
           </TableCell>
-          <TableCell>{tk?.contrant_detail?.name}</TableCell>
+          <TableCell className={color}>
+            <Link href={`${ROUTER.ADDRESSES.INDEX}/${tk.address}`}>
+              {tk?.contrant_detail?.name || '(Not Provided)'}
+            </Link>
+          </TableCell>
           <TableCell className="flex flex-1 flex-col">
             {tk?.contract_interface?.map((ci, i) => <div key={i}>{ci}</div>)}
           </TableCell>
@@ -43,7 +47,13 @@ function TokenTransfersTable({ tokens }: props) {
           <TableCell>
             <ToolTip text={tk.topic2!} type="address" />
           </TableCell>
-          <TableCell>{parseDecimals(tk.totalSupply, 4)}</TableCell>
+          <TableCell>
+            <ToolTip
+              text={parseDecimals(tk.totalSupply, 4)}
+              showCopy={false}
+              className="!text-white-100"
+            />
+          </TableCell>
         </TableRow>
       ))}
     </Table>

@@ -9,7 +9,7 @@ export const weiToEther = (value: BigNumber | string | number) => {
     newValue = value;
   } else if (typeof value === 'string') {
     newValue = value.startsWith('0x')
-    ? new BigNumber(value, 16).dividedBy(new BigNumber(10).pow(18))
+      ? new BigNumber(value, 16).dividedBy(new BigNumber(10).pow(18))
       : new BigNumber(value).multipliedBy(1e9);
   } else if (typeof value === 'number') {
     newValue = new BigNumber(value).multipliedBy(1e9);
@@ -17,6 +17,5 @@ export const weiToEther = (value: BigNumber | string | number) => {
     return '';
   }
 
-  return newValue
-    .toFixed(9);
+  return newValue.toFixed(9);
 };

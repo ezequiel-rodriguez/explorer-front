@@ -8,7 +8,8 @@ export default {
   ],
   safelist: [
     {
-      pattern: /(stroke|text|bg|border)-(brand-orange|brand-green|brand-purple|brand-pink|brand-cyan|white-100)/,
+      pattern:
+        /(stroke|text|bg|border)-(brand-orange|brand-green|brand-purple|brand-pink|brand-cyan|white-100)/,
     },
   ],
   theme: {

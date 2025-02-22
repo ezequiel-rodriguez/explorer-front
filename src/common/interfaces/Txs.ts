@@ -33,6 +33,7 @@ export interface IInternalTxs {
     gasUsed: string;
     code: string;
     output: string;
+    address: string;
   };
   index: number;
   timestamp: string;

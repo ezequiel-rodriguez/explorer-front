@@ -54,12 +54,17 @@ function TxDetail() {
         title="Transactions Fee:"
         value={`${txFee(tx?.gasPrice, tx?.gasUsed)} RBTC`}
       />
-      <ListItem title="Gas Price:" value={
-        <span className='flex gap-2'>
-          <span>{tx?.gasPrice} RBTC</span>
-          <span className='text-white-400'>({weiToEther(tx!.gasPrice)} Gwei)</span>
-        </span>
-      } />
+      <ListItem
+        title="Gas Price:"
+        value={
+          <div className="sm:flex gap-2">
+            <div>{tx?.gasPrice} RBTC</div>
+            <div className="text-white-400">
+              ({weiToEther(tx!.gasPrice)} Gwei)
+            </div>
+          </div>
+        }
+      />
       <ListItem title="Gas Used:" value={parseDecimals(tx?.gasUsed)} />
       <ListItem title="Input:" value={<Code code={tx?.input} />} />
     </ListContent>

@@ -21,7 +21,7 @@ function EventsTable({ events }: props) {
   return (
     <Table>
       <TableHeader>
-        <TableCell className='w-8 flex-initial' />
+        <TableCell type="icon" />
         <TableCell className="!text-left">Event</TableCell>
         <TableCell>Address</TableCell>
         <TableCell>Arguments</TableCell>
@@ -30,7 +30,7 @@ function EventsTable({ events }: props) {
       </TableHeader>
       {events?.map((e, i) => (
         <TableRow key={i}>
-          <TableCell className='w-8 flex-initial'>
+          <TableCell type="icon">
             <Link href={`${ROUTER.EVENTS.INDEX}/${e.eventId}`}>
               <InternalLinkIcon className={`${color}`} />
             </Link>

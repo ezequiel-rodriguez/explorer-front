@@ -28,7 +28,6 @@ export default async function page({ params }: props) {
     `${ROUTER.ITXS.INDEX}/${txParam}`,
   );
   const itx = response?.data;
-  console.log('itx: ', itx)
   return (
     <Card pd="p0" className="mt-6">
       <Link
@@ -90,7 +89,10 @@ export default async function page({ params }: props) {
           title="Type:"
           value={<Badge text={itx!.type!} type="info" />}
         />
-        <ListItem title="Input" value={<Code code={itx?.action.input || ' '} />} />
+        <ListItem
+          title="Input"
+          value={<Code code={itx?.action.input || ' '} />}
+        />
         <ListItem
           title="Value:"
           value={`${parseDecimals(itx?.action.value, 6)} RBTC`}
@@ -104,17 +106,16 @@ export default async function page({ params }: props) {
           title="Gas Used:"
           value={parseDecimals(itx?.result?.gasUsed)}
         />
-        {
-          itx?.action.init && (
-            <ListItem title="Init:" value={<Code code={itx?.action.init} />} />
-          )
-        }
-        {
-          itx?.result?.code && (
-            <ListItem title="Code:" value={<Code code={itx?.result?.code} />} />
-          )
-        }
-        <ListItem title="Output:" value={<Code code={itx?.result?.output || ' '} />} />
+        {itx?.action.init && (
+          <ListItem title="Init:" value={<Code code={itx?.action.init} />} />
+        )}
+        {itx?.result?.code && (
+          <ListItem title="Code:" value={<Code code={itx?.result?.code} />} />
+        )}
+        <ListItem
+          title="Output:"
+          value={<Code code={itx?.result?.output || ' '} />}
+        />
         <ListItem title="Error:" value={itx?.error} />
       </ListContent>
     </Card>
