@@ -32,7 +32,8 @@ export default function BlockContainer() {
           <span>autoupdate</span>
         </div>
       </div>
-      {sortedBlocks?.slice(0, 6)
+      {sortedBlocks
+        ?.slice(0, 6)
         .map((block, i) => <BlockCard key={i} block={block} />)}
       <div className="mt-3 w-full text-center">
         <Link
