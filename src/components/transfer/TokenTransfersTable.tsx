@@ -35,7 +35,7 @@ function TokenTransfersTable({ tokens }: props) {
           </TableCell>
           <TableCell className={color}>
             <Link href={`${ROUTER.ADDRESSES.INDEX}/${tk.address}`}>
-              {tk?.contrant_detail?.name || '(Not Provided)'}
+              {tk?.contract_detail?.name || '(Not Provided)'}
             </Link>
           </TableCell>
           <TableCell className="flex flex-1 flex-col">

@@ -41,13 +41,13 @@ function EventDetail() {
       <hr className="border-gray-700 border-[1px] my-2" />
       <ListItem
         title="Value:"
-        value={`${parseDecimals(event?.transaction.value, 6)} ${event?.contrant_detail.symbol}`}
+        value={`${parseDecimals(event?.transaction.value, 6)} ${event?.contract_detail.symbol}`}
       />
       <ListItem
         title="Contract:"
         value={
           <div className="flex items-center gap-1 text-brand-purple">
-            ${event?.contrant_detail.name}
+            ${event?.contract_detail.name}
             <ArrowLargeIcon />
             <ToolTip text={event?.address} type="address" className="!p-0" />
           </div>

@@ -24,7 +24,7 @@ export interface IEvents {
   txStatus: string;
   address_in_event: AddressInEvent[];
   totalSupply: number;
-  contrant_detail: {
+  contract_detail: {
     name: string;
     symbol: string;
   };
