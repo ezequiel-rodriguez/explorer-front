@@ -16,7 +16,7 @@ export default function BlockContainer() {
     localStorage.setItem('autoupdate', value ? 'active' : 'inactive');
   };
   if (!blocks) return <CardLoader />;
-  const filterBlocks = blocks.sort((a, b) => b.number - a.number);
+  const sortedBlocks = blocks.sort((a, b) => b.number - a.number);
 
   return (
     <Card className="w-full bg-secondary" pd="p3">
@@ -32,7 +32,7 @@ export default function BlockContainer() {
           <span>autoupdate</span>
         </div>
       </div>
-      {filterBlocks?.slice(0, 6)
+      {sortedBlocks?.slice(0, 6)
         .map((block, i) => <BlockCard key={i} block={block} />)}
       <div className="mt-3 w-full text-center">
         <Link
