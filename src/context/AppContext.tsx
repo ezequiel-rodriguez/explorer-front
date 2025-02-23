@@ -27,7 +27,7 @@ export const AppDataProvider = ({
   const [widthScreen, setWidthScreen] = useState(0);
 
   const fetchLatestBlock = async () => {
-    const params = { take_data: 2 };
+    const params = { take: 2 };
     const response: DataResponse<IBlocks[]> = await fetchData<IBlocks[]>(
       ROUTER.BLOCKS.INDEX,
       params,
