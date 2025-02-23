@@ -30,7 +30,7 @@ function TokensTable({ tokens }: props) {
         <TableRow key={i}>
           <TableCell>
             <Link
-              href={`${ROUTER.ADDRESSES.INDEX}/${pathname === ROUTER.ADDRESSES.INDEX ? tk.address : tk.contract}`}
+              href={`${ROUTER.ADDRESSES.INDEX}/${tk.address}`}
               className={`${textColor}`}
             >
               {tk.name || `(Not Provided)`}
