@@ -49,10 +49,20 @@ function EventsTable({ events }: props) {
                     <span>{a.name}:</span>
                     <ToolTip text={a.value} type="address" />
                   </div>
-                ) : (
+                ) : /^0x[a-fA-F0-9]{64}$/.test(a.value) ? ( // Check if it's a blockHash (64-character hex)
+                  <div className="flex">
+                    <span>{a.name}:</span>
+                    <ToolTip text={a.value} type="hash" />
+                  </div>
+                ) : /^0x[a-fA-F0-9]+$/.test(a.value) ? ( // Check if it's a hex number
                   <div className="flex gap-1">
                     <span className="flex">{a.name}:</span>
                     <span className="flex">{weiToEther(a.value)}</span>
+                  </div>
+                ) : (
+                  <div className="flex gap-1">
+                    <span className="flex">{a.name}:</span>
+                    <span className="flex">{a.value}</span>
                   </div>
                 )}
               </div>
