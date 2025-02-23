@@ -1,20 +1,19 @@
 'use client';
-import React from 'react';
+import { ROUTER } from '@/common/constants';
+import Link from 'next/link';
 
 const error = () => {
-  const reload = () => {
-    window.location.reload();
-  };
   return (
-    <div className="w-full h-full flex justify-center">
-      <div className="flex flex-col mt-20">
-        <div className="text-lg mb-4">An error has occurred</div>
-        <button
-          className="btn px-4 py-2 bg-brand-orange rounded-xl text-black flex justify-center items-center gap-2"
-          onClick={reload}
+    <div className="w-full h-screen flex justify-center mt-8">
+      <div className="w-full max-h-fit flex flex-col text-center bg-secondary p-6 sm:p-12 rounded-xl">
+        <div className='text-4xl sm:text-[80px] font-bold mb-4 sm:mb-16'>Ooops</div>
+        <div className="text-lg sm:text-[38px] mb-6 sm:mb-10 font-bold">An error has occurred</div>
+        <Link
+          className="btn px-4 w-fit mx-auto py-2 bg-brand-orange rounded-xl text-black font-medium"
+          href={ROUTER.HOME}
         >
-          Try again
-        </button>
+          Go To Home
+        </Link>
       </div>
     </div>
   );
