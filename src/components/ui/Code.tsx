@@ -10,7 +10,7 @@ type Props = {
   height?: string;
 };
 
-function Code({ code, height }: Props) {
+function Code({ code }: Props) {
   useEffect(() => {
     Prism.highlightAll();
   }, [code]);
