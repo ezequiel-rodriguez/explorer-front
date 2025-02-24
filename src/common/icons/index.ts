@@ -1,6 +1,7 @@
 // /common/icons/index.ts
 export { default as ArrowLeftIcon } from './ArrowLeftIcon';
 export { default as ArrowRightIcon } from './ArrowRightIcon';
+export { default as ArrowDownIcon } from './ArrowDownIcon';
 export { default as HomeIcon } from './HomeIcon';
 export { default as HomeActiveIcon } from './HomeActiveIcon';
 export { default as BlockIcon } from './BlockIcon';
@@ -36,3 +37,4 @@ export { default as DiscordIcon } from './DiscordIcon';
 export { default as ArrowLargeIcon } from './ArrowLargeIcon';
 export { default as InternalLinkIcon } from './InternalLinkIcon';
 export { default as Logo } from './Logo';
+export { default as DownloadIcon } from './DownloadIcon';

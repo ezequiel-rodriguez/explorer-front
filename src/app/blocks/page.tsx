@@ -20,6 +20,8 @@ export default async function page(props: IPageProps) {
               take: response?.paginationData?.take ?? 50,
             }
           }
+          pureData={response?.data}
+          dataIndicator="blocks"
         />
       </div>
       <BlocksTable blocks={response?.data} />

@@ -4,6 +4,7 @@ type props = {
   className?: string;
   label?: string | React.ReactNode;
   icon?: React.ReactNode;
+  iconRight?: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   type?: 'primary' | 'secondary' | 'icon' | 'outline' | 'small';
   disabled?: boolean;
@@ -14,6 +15,7 @@ function Button({
   className,
   label,
   icon,
+  iconRight,
   type = 'primary',
   disabled = false,
 }: props) {
@@ -34,6 +36,7 @@ function Button({
     >
       {icon}
       {label}
+      {iconRight}
     </button>
   );
 }

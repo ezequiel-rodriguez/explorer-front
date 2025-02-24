@@ -19,6 +19,8 @@ export default async function page(props: IPageProps) {
               take: response?.paginationData?.take ?? 50,
             }
           }
+          pureData={response?.data}
+          dataIndicator="tokens"
         />
       </div>
       <TokensTable tokens={response?.data} />
