@@ -8,6 +8,7 @@ type TableProps = {
 interface TableCellProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: ReactNode;
   className?: string;
+  type?: 'icon' | 'text';
 }
 
 export const Table = ({ children }: TableProps) => {
@@ -37,12 +38,12 @@ export const TableRow = ({ children }: TableProps) => {
 export const TableCell = ({
   children,
   className,
+  type = 'text',
   ...props
 }: TableCellProps) => {
   return (
     <div
-      className={`flex-1 text-center flex justify-center ${className}`}
-      style={{ minWidth: '120px' }}
+      className={`flex-1 text-center flex justify-center ${type === 'text' ? 'min-w-[120px]' : 'w-14 flex-initial'} ${className}`}
       {...props}
     >
       {children}

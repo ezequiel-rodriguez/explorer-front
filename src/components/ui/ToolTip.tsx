@@ -80,7 +80,7 @@ const ToolTip: React.FC<Props> = ({
 
   return (
     <div
-      className={`relative inline-block px-2 border rounded-xl ${className} ${textColor} ${group ? 'border-dashed border-highlighted bg-dark-brown' : 'border-transparent'}`}
+      className={`relative inline-block border rounded-xl ${className} ${textColor} ${group ? 'border-dashed border-highlighted bg-dark-brown px-2' : 'border-transparent'}`}
     >
       <div className="flex items-center">
         {trim > 0 ? (

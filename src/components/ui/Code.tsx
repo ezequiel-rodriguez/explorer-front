@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 
 type Props = {
   code: string | undefined;
-  height?: string;
 };
 
 function Code({ code }: Props) {
@@ -39,7 +38,7 @@ function Code({ code }: Props) {
           </code>
         </pre>
       ) : (
-        <div className="p-2 min-h-9 break-all">{code}</div>
+        <div className="p-2 min-h-9 break-all max-h-28">{code}</div>
       )}
     </div>
   );
