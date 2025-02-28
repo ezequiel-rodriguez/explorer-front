@@ -42,10 +42,10 @@ function TokenTransfersTable({ tokens }: props) {
             {tk?.contract_interface?.map((ci, i) => <div key={i}>{ci}</div>)}
           </TableCell>
           <TableCell>
-            <ToolTip text={tk.topic1!} type="address" />
+            <ToolTip text={tk.args[0]} type="address" />
           </TableCell>
           <TableCell>
-            <ToolTip text={tk.topic2!} type="address" />
+            <ToolTip text={tk.args[1]} type="address" />
           </TableCell>
           <TableCell>
             <ToolTip
