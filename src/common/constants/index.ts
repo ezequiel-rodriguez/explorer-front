@@ -39,7 +39,8 @@ export const ROUTER = {
     INDEX: '/events',
     ADDRESS: '/events/address',
     TX: '/events/tx',
-    TOKEN_TRANSFER: '/events/transfer',
+    TOKEN_TRANSFER_BY_TX: '/events/transfer/tx',
+    TOKEN_TRANSFER_BY_ADDRESS: '/events/transfer/address',
   },
   BALANCES: {
     ADDRESS: '/balances/address',
